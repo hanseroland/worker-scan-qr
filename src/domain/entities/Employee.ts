@@ -16,4 +16,4 @@ export class Employee extends TenantEntity {
     ) {
         super(companyId)
     }
-}
+} 
