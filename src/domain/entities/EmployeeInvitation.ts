@@ -1,0 +1,17 @@
+import { TenantEntity } from "./BaseEntity";
+
+export class EmployeeInvitation extends TenantEntity {
+    constructor(
+        public readonly id: string,
+        companyId: string,
+        public readonly employeeId: string,
+        public type: string,
+        public token: string,
+        public status: string,
+        public expiresAt: Date,
+        public readonly createdAt: Date
+
+    ) {
+        super(companyId)
+    }
+}
