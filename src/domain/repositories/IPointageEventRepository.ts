@@ -1,7 +1,7 @@
 import { PointageEvent } from "@domain/entities/PointageEvent";
+import { IBaseRepository } from "./IBaseRepository";
 
-export interface IPointageEventRepository {
+export interface IPointageEventRepository extends IBaseRepository<PointageEvent> {
     findByEmployeeId(employeeId: string, companyId: string): Promise<PointageEvent[]>;
-    findLastByEmployee(employeeId: string, companyId: string): Promise<PointageEvent[] | null>;
-    save(event: PointageEvent): Promise<void>;
+    findLastByEmployee(employeeId: string, companyId: string): Promise<PointageEvent | null>;
 }

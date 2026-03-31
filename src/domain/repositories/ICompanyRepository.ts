@@ -1,9 +1,6 @@
 import { Company } from "@domain/entities/Company"
+import { IBaseRepository } from "./IBaseRepository"
 
-export interface ICompanyRepository {
-    findById(id: string): Promise<Company | null>
+export interface ICompanyRepository extends IBaseRepository<Company> {
     findByEmail(email: string): Promise<Company | null>
-    save(company: Company): Promise<void>
-    update(company: Company): Promise<void>
-    delete(id: string): Promise<void>
 }
