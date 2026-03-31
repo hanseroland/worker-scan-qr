@@ -18,11 +18,11 @@ export type CompanyResponseDTO = Company
 // tout sauf id, createdAt, employeeCode, userId
 export type CreateEmployeeDTO = Omit<Employee, 'id' | 'createdAt' | 'employeeCode' | 'userId'>
 // firstName, lastName, phone, isActive optionnels
-export type UpdateEmployeeDTO = Partial<Omit<Company, 'id' | 'createdAt'>>
+export type UpdateEmployeeDTO = Partial<Omit<Employee, 'id' | 'createdAt'>>
 // id, firstName, lastName, email, isActive seulement
-export type EmployeeListItemDTO = Partial<Omit<Company, 'userId' | 'employeeCode' | 'createdAt'>>
+export type EmployeeListItemDTO = Pick<Employee, 'id' | 'firstName' | 'lastName' | 'email' | 'isActive'>
 /**
  * DTOs pour User
  */
 export type SafeUserDTO = Omit<User, 'password'>
-export type CreateUserDTO = Omit<Company, 'id' | 'createdAt'>
+export type CreateUserDTO = Omit<User, 'id' | 'createdAt'>
