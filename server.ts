@@ -1,5 +1,7 @@
 // server.ts
 import app from './src/app'
+import 'reflect-metadata'
+
 
 const PORT = process.env.PORT || 3000
 
