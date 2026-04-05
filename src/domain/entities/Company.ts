@@ -1,3 +1,6 @@
+import { Entity } from "@shared/decorators";
+
+@Entity('companies')
 export class Company {
 
     constructor(
