@@ -8,9 +8,9 @@ import { User } from "@domain/entities/User";
 
 //tout sauf id, createdAt, employeeCount
 export type CreateCompanyDTO = Omit<Company, 'id' | 'createdAt' | 'employeeCount'>
-export type UpdateCompanyDTO = Partial<Omit<Company, 'id' | 'createdAt'>>
+export type UpdateCompanyDTO = Partial<Omit<Company, 'id' | 'createdAt' | 'employeeCount'>>
 export type CompanyResponseDTO = Company
-
+ 
 
 /**
  * DTOs pour Employee
