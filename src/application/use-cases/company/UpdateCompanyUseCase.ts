@@ -15,7 +15,7 @@ import { UpdateCompanyDTO } from "@shared/types/dto.types";
       throw new NotFoundError('Company not found');
     }
 
-    // 2. Créer l'entité avec les champs système
+    // 2. Modifier l'entité avec les champs système
     const company = new Company(
       existingCompany.id,
       dto.name || existingCompany.name,
