@@ -30,7 +30,7 @@ export class ActivationAccountUseCase {
         existingUser.activationTokenExpires = null;
 
         // 6. Enregistrer les changements dans la base de données
-        await this.userRepository.save(existingUser);
+        await this.userRepository.update(existingUser);
 
         return existingUser;
 

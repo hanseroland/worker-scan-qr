@@ -44,7 +44,7 @@ export class LoginUseCase {
             randomUUID(),
             hashedRefreshToken,
             existingUser.id,
-            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // expiration 7 jours
             new Date()
         )
 

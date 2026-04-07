@@ -16,7 +16,7 @@ export class ForgotPasswordUseCase {
             // Ne pas révéler que l'email n'existe pas pour des raisons de sécurité
             return { resetToken: "" };
         }
-
+ 
         // 2. Générer resetPasswordToken
         const resetToken = this.hashService.generateRandomToken();
 

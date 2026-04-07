@@ -1,12 +1,14 @@
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { IHashService } from "@domain/services/IHashService";
+import { IPasswordService } from "@domain/services/IPasswordService";
 import { AuthError } from "@shared/errors/AuthError";
 import { NotFoundError } from "@shared/errors/NotFoundError";
 
 export class ResetPasswordUseCase{
         constructor(
             private userRepository: IUserRepository,
-            private hashService: IHashService
+            private hashService: IHashService,
+            private passwordService: IPasswordService
         ){}
 
         async execute(token: string, newPassword:string): Promise<void>{
@@ -24,7 +26,7 @@ export class ResetPasswordUseCase{
                 throw new AuthError("Reset token has expired");
 
             // 4. Hasher nouveau password
-            const hashedPassword = await this.hashService.hash(newPassword);
+            const hashedPassword = await this.passwordService.hash(newPassword);
             user.password = hashedPassword;
 
             // 5. Effacer resetPasswordToken et resetPasswordExpires
