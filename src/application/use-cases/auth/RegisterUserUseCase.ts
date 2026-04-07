@@ -31,7 +31,7 @@ export class RegisterUserUseCase {
         // 4 Hash le token d'activation pour le stocker
         const hashedActivationToken = await this.hashService.hash(activationToken);
 
-        // 5. Créer l'expiration du token d'activation (ex: 24h)
+        // 5. Créer l'expiration du token d'activation (24h)
         const activationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
         // 6. Créer l'utilisateur
