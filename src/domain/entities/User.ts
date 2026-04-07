@@ -8,6 +8,11 @@ export class User {
         public role: UserRole,
         public companyId: string | null,
         public employeeId: string | null,
+        public isActive: boolean,
+        public activationToken: string | null,
+        public activationTokenExpires: Date | null,
+        public resetPasswordToken: string | null,
+        public resetPasswordExpires: Date | null,
         public readonly createdAt: Date
     ) {
 

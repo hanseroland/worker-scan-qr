@@ -3,6 +3,6 @@ import { IBaseRepository } from "./IBaseRepository"
 
 export interface IEmployeeRepository extends IBaseRepository<Employee> {
     findByEmail(email: string): Promise<Employee | null>
-    findByEmployeeCode(employeeCode: string): Promise<Employee | null>
+    findByEmployeeCode(code: string, companyId: string): Promise<Employee | null>
     findAllByCompany(companyId: string): Promise<Employee[]>
 }
