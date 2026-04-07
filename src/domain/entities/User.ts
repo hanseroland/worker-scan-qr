@@ -16,5 +16,5 @@ export class User {
         public readonly createdAt: Date
     ) {
 
-    }
+    } 
 }

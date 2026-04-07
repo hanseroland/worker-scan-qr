@@ -6,4 +6,4 @@ export class RefreshToken {
         public expiresAt:Date,
         public readonly createdAt:Date,
     ){}
-}
+} 
