@@ -21,6 +21,7 @@ import { UpdateCompanyDTO } from "@shared/types/dto.types";
       dto.name || existingCompany.name,
       dto.email || existingCompany.email,
       dto.phone !== undefined ? dto.phone : existingCompany.phone,
+      dto.logo !== undefined ? dto.logo : existingCompany.logo,
       dto.isActive !== undefined ? dto.isActive : existingCompany.isActive,
       existingCompany.createdAt,
       existingCompany.employeeCount

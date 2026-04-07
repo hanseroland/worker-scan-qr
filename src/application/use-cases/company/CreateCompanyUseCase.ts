@@ -21,6 +21,7 @@ import { randomUUID } from 'crypto'
       dto.name,
       dto.email,
       dto.phone || null,
+       dto.logo || null,
       true,
       new Date(),
       0

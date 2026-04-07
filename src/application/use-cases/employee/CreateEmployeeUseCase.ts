@@ -45,6 +45,7 @@ export class CreateEmployeeUseCase{
              null,
              dto.firstName,
              dto.lastName,
+             dto.picture || null,
              dto.email,
              dto.phone || null,
              employeeCode,

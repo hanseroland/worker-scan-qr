@@ -22,6 +22,7 @@ import { UpdateEmployeeDTO } from "@shared/types/dto.types";
       dto.userId !== undefined ? dto.userId : existingEmployee.userId,
       dto.firstName || existingEmployee.firstName,
       dto.lastName || existingEmployee.lastName,
+      dto.picture !== undefined ? dto.picture : existingEmployee.picture,
       dto.email || existingEmployee.email,
       dto.phone !== undefined ? dto.phone : existingEmployee.phone,
       existingEmployee.employeeCode,
