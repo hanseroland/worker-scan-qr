@@ -1,5 +1,6 @@
 import { Company } from "@domain/entities/Company";
 import { Employee } from "@domain/entities/Employee";
+import { RefreshToken } from "@domain/entities/RefreshToken";
 import { User } from "@domain/entities/User";
 
 /**
@@ -24,5 +25,13 @@ export type EmployeeListItemDTO = Pick<Employee, 'id' | 'firstName' | 'lastName'
 /**
  * DTOs pour User
  */
-export type SafeUserDTO = Omit<User, 'password'>
-export type CreateUserDTO = Omit<User, 'id' | 'createdAt'>
+export type SafeUserDTO = Omit<User, 'password' | 'activationToken' | 'activationTokenExpires' 
+| 'resetPasswordToken' | 'resetPasswordExpires'>
+export type CreateUserDTO = Omit<User, 'id' | 'createdAt' | 'isActive' | 'activationToken' | 
+'activationTokenExpires' | 'resetPasswordToken' | 'resetPasswordExpires'>;
+
+/**
+ * DTOs Création d'un refresh token
+ */
+// tout sauf id et createdAt
+export type CreateRefreshTokenDTO = Omit<RefreshToken, 'id' | 'createdAt'>
