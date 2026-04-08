@@ -1,39 +1,40 @@
-import { IUserRepository } from "@domain/repositories/IUserRepository";
-import { IHashService } from "@domain/services/IHashService";
-import { IPasswordService } from "@domain/services/IPasswordService";
-import { AuthError } from "@shared/errors/AuthError";
-import { NotFoundError } from "@shared/errors/NotFoundError";
+import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { ICryptoService } from '@domain/services/ICryptoService';
+import { IPasswordService } from '@domain/services/IPasswordService';
+import { AuthError } from '@shared/errors/AuthError';
+import { NotFoundError } from '@shared/errors/NotFoundError';
 
-export class ResetPasswordUseCase{
-        constructor(
-            private userRepository: IUserRepository,
-            private hashService: IHashService,
-            private passwordService: IPasswordService
-        ){}
+export class ResetPasswordUseCase {
+  constructor(
+    private userRepository: IUserRepository,
+    private cryptoService: ICryptoService,
+    private passwordService: IPasswordService
+  ) {}
 
-        async execute(token: string, newPassword:string): Promise<void>{
+  async execute(token: string, newPassword: string): Promise<void> {
+    // 1. hash le token reçu
+    const hashedToken = await this.cryptoService.cryptoHash(token);
 
-            // 1. hash le token reçu
-            const hashedToken = await this.hashService.hash(token);
+    // 2. Chercher user par resetPasswordToken hashé
+    const user =
+      await this.userRepository.findByResetPasswordToken(hashedToken);
+    if (!user) throw new NotFoundError('Invalid or expired reset token');
 
-            // 2. Chercher user par resetPasswordToken hashé
-            const user = await this.userRepository.findByResetPasswordToken(hashedToken);
-            if (!user) throw new NotFoundError("Invalid or expired reset token");
-            
+    // 3. Vérifier expiration
+    if (
+      user.resetPasswordExpires &&
+      user.resetPasswordExpires.getTime() < Date.now()
+    )
+      throw new AuthError('Reset token has expired');
 
-            // 3. Vérifier expiration
-            if (user.resetPasswordExpires && user.resetPasswordExpires.getTime() < Date.now())
-                throw new AuthError("Reset token has expired");
+    // 4. Hasher nouveau password
+    const hashedPassword = await this.passwordService.hash(newPassword);
+    user.password = hashedPassword;
 
-            // 4. Hasher nouveau password
-            const hashedPassword = await this.passwordService.hash(newPassword);
-            user.password = hashedPassword;
+    // 5. Effacer resetPasswordToken et resetPasswordExpires
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
 
-            // 5. Effacer resetPasswordToken et resetPasswordExpires
-            user.resetPasswordToken = null;
-            user.resetPasswordExpires = null;
-
-            await this.userRepository.update(user);
-            
-        }
+    await this.userRepository.update(user);
+  }
 }

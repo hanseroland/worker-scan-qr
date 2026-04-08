@@ -1,17 +1,15 @@
-import { Company } from "@domain/entities/Company";
-import { ICompanyRepository } from "@domain/repositories/ICompanyRepository";
-import { NotFoundError } from "@shared/errors/NotFoundError";
-import { UpdateCompanyDTO } from "@shared/types/dto.types";
+import { Company } from '@domain/entities/Company';
+import { ICompanyRepository } from '@domain/repositories/ICompanyRepository';
+import { NotFoundError } from '@shared/errors/NotFoundError';
+import { UpdateCompanyDTO } from '@shared/types/dto.types';
 
-
- export class UpdateCompanyUseCase {
-
+export class UpdateCompanyUseCase {
   constructor(private readonly companyRepository: ICompanyRepository) {}
 
-  async execute(id:string,dto: UpdateCompanyDTO): Promise<Company> {
+  async execute(id: string, dto: UpdateCompanyDTO): Promise<Company> {
     // 1. Vérifier si l'email existe déjà
     const existingCompany = await this.companyRepository.findById(id);
-    if(!existingCompany){
+    if (!existingCompany) {
       throw new NotFoundError('Company not found');
     }
 
@@ -25,7 +23,7 @@ import { UpdateCompanyDTO } from "@shared/types/dto.types";
       dto.isActive !== undefined ? dto.isActive : existingCompany.isActive,
       existingCompany.createdAt,
       existingCompany.employeeCount
-    )
+    );
     // 3. Sauvegarder et retourner
     await this.companyRepository.update(company);
     return company;
