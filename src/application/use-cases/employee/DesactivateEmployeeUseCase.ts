@@ -1,7 +1,7 @@
 import { IEmployeeRepository } from '@domain/repositories/IEmployeeRepository';
 import { NotFoundError } from '@shared/errors/NotFoundError';
 
-export class DeactivateEmployeeUseCase {
+export class DesactivateEmployeeUseCase {
   constructor(private readonly employeeRepository: IEmployeeRepository) {}
 
   async execute(id: string, companyId: string): Promise<void> {
@@ -15,3 +15,4 @@ export class DeactivateEmployeeUseCase {
     await this.employeeRepository.update(employee);
   }
 }
+ 
