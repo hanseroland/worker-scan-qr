@@ -1,5 +1,6 @@
 import { Company } from '@domain/entities/Company';
 import { Employee } from '@domain/entities/Employee';
+import { Location } from '@domain/entities/Location';
 import { RefreshToken } from '@domain/entities/RefreshToken';
 import { User } from '@domain/entities/User';
 
@@ -59,3 +60,15 @@ export type CreateUserDTO = Omit<
  */
 // tout sauf id et createdAt
 export type CreateRefreshTokenDTO = Omit<RefreshToken, 'id' | 'createdAt'>;
+
+/**
+ * DTOs pour Location
+ */
+
+export type CreateLocationDTO = Omit<Location,'id'>;
+
+export type UpdateLocationDTO = Partial<
+  Omit<Location, 'id' | 'companyId'>
+>;
+
+export type LocationResponseDTO = Location;
