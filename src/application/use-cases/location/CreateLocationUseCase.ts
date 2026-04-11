@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 
 export class CreateLocationUseCase {
     constructor(
-        private readonly locationRepository: ILocationRepository
+        private readonly locationRepository: ILocationRepository 
     ){}
 
     async execute(dto:CreateLocationDTO): Promise<Location>{
