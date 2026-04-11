@@ -1,21 +1,22 @@
 import { User } from "@domain/entities/User";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { NotFoundError } from "@shared/errors/NotFoundError";
-import { SafeUserDTO } from "@shared/types/dto.types";
+import { UpdateUserDTO } from "@shared/types/dto.types";
 
-export class UpdateUserCase {
+export class UpdateUserUseCase {
     constructor(
         private readonly userRepository: IUserRepository
     ){}
 
-    async execute(id:string, companyId:string, dto:SafeUserDTO): Promise<User>{
+    async execute(id:string,dto:UpdateUserDTO): Promise<User>{
 
         // 1. Regarder si l'utilisateur existe
-        const userExists = await this.userRepository.findById(id, companyId);
+        const userExists = await this.userRepository.findById(id);
         if(!userExists) throw new NotFoundError('User not found');
 
         // 2. Mettre à jour les champs modifiables
-        userExists.role = dto.role;
+        if(dto.role !== undefined) userExists.role = dto.role;
+        if(dto.isActive !== undefined) userExists.isActive = dto.isActive;
 
         // 3. Enregistrer les modifications
         await this.userRepository.update(userExists);

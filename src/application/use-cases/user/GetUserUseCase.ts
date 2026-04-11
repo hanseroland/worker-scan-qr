@@ -2,7 +2,7 @@ import { User } from "@domain/entities/User";
 import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { NotFoundError } from "@shared/errors/NotFoundError";
 
-export class GetUserCase {
+export class GetUserUseCase {
     constructor(
         private readonly userRepository: IUserRepository
     ){}
