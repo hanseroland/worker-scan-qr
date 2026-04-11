@@ -3,5 +3,6 @@ export interface ICryptoService {
   generateResetPasswordToken(): string;
   generateRandomToken(): string; 
   cryptoHash(data: string): string;
+  generateOTP(): string;
 
 }
