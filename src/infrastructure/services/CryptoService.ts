@@ -21,4 +21,10 @@ export class CryptoService implements ICryptoService {
         return crypto.randomBytes(32).toString("hex");
     }
 
+    generateOTP(): string {
+        // 6 chiffres numériques
+        const otp = crypto.randomInt(100000, 999999).toString();
+        return otp;
+    }
+
 }
