@@ -55,6 +55,10 @@ export type CreateUserDTO = Omit<
   | 'resetPasswordExpires'
 >;
 
+export type UpdateUserDTO = Partial<Omit<User, 'id' | 'createdAt' | 'password' 
+  | 'activationToken' | 'activationTokenExpires' 
+  | 'resetPasswordToken' | 'resetPasswordExpires'>>
+
 /**
  * DTOs Création d'un refresh token
  */
