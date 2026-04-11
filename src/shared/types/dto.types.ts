@@ -1,5 +1,6 @@
 import { Company } from '@domain/entities/Company';
 import { Employee } from '@domain/entities/Employee';
+import { EmployeeInvitation } from '@domain/entities/EmployeeInvitation';
 import { Location } from '@domain/entities/Location';
 import { RefreshToken } from '@domain/entities/RefreshToken';
 import { User } from '@domain/entities/User';
@@ -74,5 +75,17 @@ export type CreateLocationDTO = Omit<Location,'id'>;
 export type UpdateLocationDTO = Partial<
   Omit<Location, 'id' | 'companyId'>
 >;
-
+ 
 export type LocationResponseDTO = Location;
+
+/**
+ * DTOs pour EmployeeInvitation
+ */
+
+export type CreateEmployeeInvitationDTO = Omit<EmployeeInvitation, 'id' | 'status' | 'token' | 'createdAt' | 'expiresAt'>;
+
+export type UpdateInvitationDTO = Partial<Omit<EmployeeInvitation, 'id' | 'companyId' | 'employeeId' | 'createdAt'>>;
+
+export type AcceptInvitationDTO = {
+  token: string
+}
