@@ -15,17 +15,16 @@ export class UpdateLocationUseCase {
         if(!locationExists) throw new NotFoundError('Location not found');
 
         // 2. Mettre à jour les champs modifiables
-        locationExists.name = dto.name ?? locationExists.name;
-        locationExists.latitude = dto.latitude ?? locationExists.latitude;
-        locationExists.longitude = dto.longitude ?? locationExists.longitude;
-        locationExists.radius = dto.radius ?? locationExists.radius;
-
-
-        // 3. Enregistrer les modifications
-        await this.locationRepository.update(locationExists);
-
-        // 4. Retourner l'emplacement mis à jour
-        return locationExists;
+        const updatedLocation = new Location(
+        locationExists.id,
+        locationExists.companyId,
+        dto.name ?? locationExists.name,
+        dto.latitude ?? locationExists.latitude,
+        dto.longitude ?? locationExists.longitude,
+        dto.radius ?? locationExists.radius
+        )
+        await this.locationRepository.update(updatedLocation)
+        return updatedLocation;
 
         
         }

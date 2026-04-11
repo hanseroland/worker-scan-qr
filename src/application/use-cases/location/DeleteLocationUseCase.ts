@@ -1,7 +1,7 @@
 import { ILocationRepository } from "@domain/repositories/ILocationRepository";
 import { NotFoundError } from "@shared/errors/NotFoundError";
 
-export class DeleteLocationUserCase {
+export class DeleteLocationUseCase {
     constructor(
         private readonly locationRepository: ILocationRepository
     ){}

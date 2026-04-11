@@ -1,14 +1,14 @@
 import { Location } from "@domain/entities/Location";
 import { ILocationRepository } from "@domain/repositories/ILocationRepository";
 
-export class GetAllUserCase {
+export class GetAllLocationsUseCase {
     constructor(
-        private readonly userRepository: ILocationRepository
+        private readonly locationRepository: ILocationRepository
     ){}
 
     async execute(companyId:string): Promise<Location[]>{
-        const users = await this.userRepository.findByCompanyLocations(companyId);
+        const locations = await this.locationRepository.findByCompanyLocations(companyId);
 
-         return users;
+         return locations;
         }
 }
