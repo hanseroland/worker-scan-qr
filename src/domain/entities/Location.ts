@@ -12,3 +12,4 @@ export class Location extends TenantEntity {
     super(companyId);
   } 
 }
+ 

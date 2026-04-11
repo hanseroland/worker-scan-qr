@@ -2,8 +2,8 @@ import { TenantEntity } from './BaseEntity';
 
 export class QRCode extends TenantEntity {
   constructor(
-    companyId: string,
     public readonly id: string,
+    companyId: string,
     public readonly locationId: string,
     public code: string,
     public expiresAt: Date,
@@ -11,4 +11,4 @@ export class QRCode extends TenantEntity {
   ) {
     super(companyId);
   }
-}
+} 

@@ -4,5 +4,7 @@ export interface ICryptoService {
   generateRandomToken(): string; 
   cryptoHash(data: string): string;
   generateOTP(): string;
+  generateQRCode(locationId: string, companyId: string, timestamp: number): string;
 
 }
+ 

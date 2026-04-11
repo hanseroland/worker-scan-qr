@@ -15,3 +15,4 @@ export class PointageEvent extends TenantEntity {
     super(companyId);
   }
 }
+ 
