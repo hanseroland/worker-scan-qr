@@ -1,4 +1,5 @@
 import { ICryptoService } from "@domain/services/ICryptoService";
+import { config } from "@shared/config";
 import crypto from 'crypto';
 
 export class CryptoService implements ICryptoService {
@@ -25,6 +26,14 @@ export class CryptoService implements ICryptoService {
         // 6 chiffres numériques
         const otp = crypto.randomInt(100000, 999999).toString();
         return otp;
+    }
+
+    generateQRcode(locationId: string, companyId: string, timestamp: number): string {
+    return crypto
+        .createHmac('sha256', config.qrcode.qr_secret || 'qr_secret')
+        .update(`${locationId}:${companyId}:${timestamp}`)
+        .digest('hex')
+        .substring(0, 32)
     }
 
 }

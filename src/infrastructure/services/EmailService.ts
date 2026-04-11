@@ -51,7 +51,7 @@ export class EmailService implements IEmailService {
         } catch (error) {
             console.error(`❌ Erreur lors de l'envoi de l'e-mail à ${to} via LWS:`, error);
             throw error;
-        }
+        } 
     };
 
      async sendWelcomeEmail(to: string, activationToken: string): Promise<void> {
