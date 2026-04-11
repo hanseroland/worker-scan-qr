@@ -32,6 +32,7 @@ interface Config {
     };
     qrcode: {
         rotationInterval: number;
+        qr_secret: string;
     };
 }
 
@@ -74,6 +75,7 @@ export const config: Config = {
         pass: process.env.EMAIL_PASS || "",
     },
     qrcode: {
-        rotationInterval: Number(process.env.QR_ROTATION_INTERVAL) || 30
+        rotationInterval: Number(process.env.QR_ROTATION_INTERVAL) || 30,
+        qr_secret: process.env.QR_SECRET || "QrS3cr3tP@ssw0rd"
     }
 };
