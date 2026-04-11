@@ -2,8 +2,10 @@ import { Company } from '@domain/entities/Company';
 import { Employee } from '@domain/entities/Employee';
 import { EmployeeInvitation } from '@domain/entities/EmployeeInvitation';
 import { Location } from '@domain/entities/Location';
+import { QRCode } from '@domain/entities/QRCode';
 import { RefreshToken } from '@domain/entities/RefreshToken';
 import { User } from '@domain/entities/User';
+import e from 'express';
 
 /**
  * DTOs pour Company
@@ -88,4 +90,22 @@ export type UpdateInvitationDTO = Partial<Omit<EmployeeInvitation, 'id' | 'compa
 
 export type AcceptInvitationDTO = {
   token: string
+}
+
+/**
+ * DTOs QRCodeScan
+ */
+
+export type CreateQRCodeDTO = Omit<QRCode, 'id' | 'code' | 'expiresAt' | 'isActive'>
+export type UpdateQRCodeDTO = Partial<Omit<QRCode, 'id' | 'companyId' | 'locationId'>>
+
+/**
+ * DTOs pour PointageEvent
+ */
+
+export type CreatePointageEventDTO = {
+  employeeId: string;
+  qrCodeId: string;
+  latitude: number;
+  longitude: number;
 }
