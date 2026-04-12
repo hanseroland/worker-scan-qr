@@ -6,3 +6,4 @@ export class ValidationError extends AppError {
     this.name = 'ValidationError';
   }
 }
+ 

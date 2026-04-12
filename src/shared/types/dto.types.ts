@@ -5,6 +5,7 @@ import { Location } from '@domain/entities/Location';
 import { QRCode } from '@domain/entities/QRCode';
 import { RefreshToken } from '@domain/entities/RefreshToken';
 import { User } from '@domain/entities/User';
+import { PointageType } from '@shared/enums';
 import e from 'express';
 
 /**
@@ -104,8 +105,20 @@ export type UpdateQRCodeDTO = Partial<Omit<QRCode, 'id' | 'companyId' | 'locatio
  */
 
 export type CreatePointageEventDTO = {
-  employeeId: string;
-  qrCodeId: string;
-  latitude: number;
-  longitude: number;
+  employeeId: string
+  companyId: string      
+  qrCode: string         
+  latitude: number
+  longitude: number
+}
+
+export type PointageEventResponseDTO = {
+  id: string
+  employeeId: string
+  companyId: string
+  type: PointageType
+  scannedAt: Date
+  latitude: number
+  longitude: number
+  isValide: boolean
 }
