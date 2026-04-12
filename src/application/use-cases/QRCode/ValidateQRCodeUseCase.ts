@@ -14,7 +14,6 @@ export class ValidateQRCodeUseCase {
         code: string, 
         latitude: number, 
         longitude: number, 
-        employeeId: string, 
         companyId: string
     ): Promise<boolean> {
         // 1. Chercher QR Code par code
