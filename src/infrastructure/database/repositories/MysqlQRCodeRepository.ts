@@ -15,11 +15,11 @@ interface QRCodeRow extends RowDataPacket {
 
 export class MysqlQRCodeRepository implements IQRCodeRepository {
 
-  async findById(id: string, companyId?: string): Promise<QRCode | null> {
+  async findById(id: string, companyId: string): Promise<QRCode | null> {
     const [rows] = await pool.execute<QRCodeRow[]>(
       `SELECT * FROM qrcodes 
-       WHERE id = ? AND (? IS NULL OR companyId = ?)`,
-      [id, companyId ?? null, companyId ?? null]
+       WHERE id = ? AND companyId = ?)`,
+      [id, companyId]
     );
 
     if (rows.length === 0) return null;

@@ -3,7 +3,7 @@ import { IUserRepository } from "@domain/repositories/IUserRepository";
 import { pool } from "../connection";
 import { RowDataPacket } from "mysql2";
 import { UserRole } from "@shared/enums";
-
+ 
 interface UserRow extends RowDataPacket {
       id: string;
       email: string;
