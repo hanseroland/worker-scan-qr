@@ -5,6 +5,7 @@ import { EmployeeInvitation } from "@domain/entities/EmployeeInvitation";
 import { IEmployeeInvitationRepository } from "@domain/repositories/IEmployeeInvitationRepository";
 
 import { InvitationStatus, InvitationType } from "@shared/enums";
+import { ValidationError } from "@shared/errors/ValidationError";
 
 interface EmployeeInvitationRow extends RowDataPacket {
   id: string;
@@ -127,14 +128,14 @@ export class MysqlEmployeeInvitationRepository
   // Enum safety
   private mapType(type: string): InvitationType {
     if (!Object.values(InvitationType).includes(type as InvitationType)) {
-      throw new Error(`Invalid InvitationType: ${type}`);
+      throw new ValidationError(`Invalid InvitationType: ${type}`);
     }
     return type as InvitationType;
   }
 
   private mapStatus(status: string): InvitationStatus {
     if (!Object.values(InvitationStatus).includes(status as InvitationStatus)) {
-      throw new Error(`Invalid InvitationStatus: ${status}`);
+      throw new ValidationError(`Invalid InvitationStatus: ${status}`);
     }
     return status as InvitationStatus;
   }
