@@ -53,7 +53,7 @@ export class MysqlCompanyRepository implements ICompanyRepository {
         company.email,
         company.phone,
         company.logo,
-        company.isActive,
+        company.isActive ? 1 : 0,
         company.createdAt,
         company.employeeCount,
       ]
@@ -70,7 +70,7 @@ export class MysqlCompanyRepository implements ICompanyRepository {
         company.email,
         company.phone,
         company.logo,
-        company.isActive,
+        company.isActive ? 1 : 0,
         company.employeeCount,
         company.id,
       ]

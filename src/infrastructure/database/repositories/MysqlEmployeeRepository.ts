@@ -73,8 +73,8 @@ export class MysqlEmployeeRepository implements IEmployeeRepository {
                 employee.email,
                 employee.phone,
                 employee.employeeCode,
-                employee.isActive,
-                 employee.createdAt
+                employee.isActive ? 1 : 0,
+                employee.createdAt
             ]
             
       );
@@ -94,7 +94,7 @@ export class MysqlEmployeeRepository implements IEmployeeRepository {
             employee.email,
             employee.phone, 
             employee.employeeCode,
-            employee.isActive, 
+            employee.isActive ? 1 : 0, 
             employee.id, 
             employee.companyId
         ]
