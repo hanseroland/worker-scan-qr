@@ -1,36 +1,52 @@
 import { Company } from '@domain/entities/Company';
 import { ICompanyRepository } from '@domain/repositories/ICompanyRepository';
 import { pool } from '@infrastructure/database/connection';
+import { RowDataPacket } from 'mysql2';
+
+interface CompanyRow extends RowDataPacket {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  logo: string;
+  isActive : number;
+  createdAt: Date,
+  employeeCount: number
+}
 
 export class MysqlCompanyRepository implements ICompanyRepository {
+
   async findById(id: string): Promise<Company | null> {
-    const [rows] = await pool.execute('SELECT * FROM companies WHERE id = ?', [
+    const [rows] = await pool.execute<CompanyRow[]>
+    ('SELECT * FROM companies WHERE id = ?', [
       id,
     ]);
-    const results = rows as any[];
-    if (results.length === 0) return null;
-    return this.mapToEntity(results[0]);
+    
+    if (rows.length === 0) return null;
+    return this.mapToEntity(rows[0]);
   }
 
   async findByEmail(email: string): Promise<Company | null> {
-    const [rows] = await pool.execute(
+    const [rows] = await pool.execute<CompanyRow[]>(
       'SELECT * FROM companies WHERE email = ?',
       [email]
     );
-    const results = rows as any[];
-    if (results.length === 0) return null;
-    return this.mapToEntity(results[0]);
+    
+    if (rows.length === 0) return null;
+    return this.mapToEntity(rows[0]);
   }
 
   async findAll(): Promise<Company[]> {
-    const [rows] = await pool.execute('SELECT * FROM companies');
-    const results = rows as any[];
-    return results.map((row) => this.mapToEntity(row));
+    const [rows] = await pool.execute<CompanyRow[]>
+    ('SELECT * FROM companies');
+   
+    return rows.map((row) => this.mapToEntity(row));
   }
 
   async save(company: Company): Promise<void> {
     await pool.execute(
-      'INSERT INTO companies (id, name, email, phone, logo, isActive, createdAt, employeeCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      `INSERT INTO companies (id, name, email, phone, logo, isActive, createdAt, employeeCount) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         company.id,
         company.name,
@@ -66,7 +82,7 @@ export class MysqlCompanyRepository implements ICompanyRepository {
   }
 
   // Mapper les résultats SQL vers l'entité Company
-  private mapToEntity(row: any): Company {
+  private mapToEntity(row: CompanyRow): Company {
     return new Company(
       row.id,
       row.name,

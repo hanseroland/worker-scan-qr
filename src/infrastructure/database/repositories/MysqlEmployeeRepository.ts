@@ -1,47 +1,62 @@
 import { Employee } from "@domain/entities/Employee";
 import { IEmployeeRepository } from "@domain/repositories/IEmployeeRepository";
 import { pool } from "../connection";
+import { RowDataPacket } from "mysql2";
 
-export class MysqlEmployeeRepository implements IEmployeeRepository{
+interface EmployeeRow extends RowDataPacket {
+    id: string;
+    companyId: string;
+     userId: string;
+     firstName: string;
+     lastName: string;
+     picture: string;
+     email: string;
+     phone: string;
+     employeeCode: string;
+     isActive: number,
+     createdAt: Date
+}
+
+export class MysqlEmployeeRepository implements IEmployeeRepository {
 
     async findById(id: string, companyId: string): Promise<Employee | null> {
 
-       const [rows] = await pool.execute(
+       const [rows] = await pool.execute<EmployeeRow[]>(
         'SELECT * FROM employees WHERE id = ? AND companyId = ?',
         [id, companyId]
         )
-        const results = rows as any[]
-        if (results.length === 0) return null
-        return this.mapToEntity(results[0])
+       
+        if (rows.length === 0) return null
+        return this.mapToEntity(rows[0])
     }
 
     async findByEmail(email: string): Promise<Employee | null> {
-         const [rows] = await pool.execute(
+         const [rows] = await pool.execute<EmployeeRow[]>(
             'SELECT * FROM employees WHERE email = ?',
             [email]
          )
-        const results = rows as any[]
-        if (results.length === 0) return null
-        return this.mapToEntity(results[0])
+        
+        if (rows.length === 0) return null
+        return this.mapToEntity(rows[0])
     }
 
     async findAllByCompany(companyId: string): Promise<Employee[]> {
-        const [rows] = await pool.execute(
+        const [rows] = await pool.execute<EmployeeRow[]>(
             'SELECT * FROM employees WHERE companyId = ?',
             [companyId]
         )
-        const results = rows as any[]
-        return results.map(row => this.mapToEntity(row))
+        
+        return rows.map(row => this.mapToEntity(row))
     }
 
     async findByEmployeeCode(code: string, companyId: string): Promise<Employee | null> {
-        const [rows] = await pool.execute(
+        const [rows] = await pool.execute<EmployeeRow[]>(
             'SELECT * FROM employees WHERE employeeCode = ? AND companyId = ?',
             [code,companyId]
         )
-        const results = rows as any[]
-        if (results.length === 0) return null
-        return this.mapToEntity(results[0])
+        
+        if (rows.length === 0) return null
+        return this.mapToEntity(rows[0])
     }
 
     async save(employee: Employee): Promise<void> {
@@ -97,7 +112,7 @@ export class MysqlEmployeeRepository implements IEmployeeRepository{
 
 
       // Mapper les résultats SQL vers l'entité Employee
-      private mapToEntity(row: any): Employee {
+      private mapToEntity(row: EmployeeRow): Employee {
         return new Employee(
           row.id,
           row.companyId,

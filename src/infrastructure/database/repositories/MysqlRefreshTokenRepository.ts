@@ -16,7 +16,7 @@ export class MysqlRefreshTokenRepository implements IRefreshTokenRepository {
 
     async findByToken(token: string): Promise<RefreshToken | null> {
         const [rows] = await pool.execute<RefreshTokenRow[]>(
-                    'SELECT * FROM refreshtokens WHERE token = ?',
+                    'SELECT * FROM refresh_tokens WHERE token = ?',
                     [token]
                 )
         
@@ -26,7 +26,7 @@ export class MysqlRefreshTokenRepository implements IRefreshTokenRepository {
 
     async findByUserId(userId: string): Promise<RefreshToken[]> {
         const [rows] = await pool.execute<RefreshTokenRow[]>(
-            'SELECT * FROM refreshtokens WHERE userId = ?',
+            'SELECT * FROM refresh_tokens WHERE userId = ?',
             [userId]
         )
        
@@ -36,7 +36,7 @@ export class MysqlRefreshTokenRepository implements IRefreshTokenRepository {
 
     async save(refreshToken: RefreshToken): Promise<void> {
         await pool.execute(
-            `INSERT INTO refreshtokens (id, token, userId, expiresAt, createdAt) 
+            `INSERT INTO refresh_tokens (id, token, userId, expiresAt, createdAt) 
             VALUES (?,?,?,?,?)`,
             [
                 refreshToken.id,
@@ -50,14 +50,14 @@ export class MysqlRefreshTokenRepository implements IRefreshTokenRepository {
 
     async deleteByToken(token: string): Promise<void> {
          await pool.execute(
-            'DELETE FROM refreshtokens WHERE token = ?', 
+            'DELETE FROM refresh_tokens WHERE token = ?', 
             [token]
         );
     }
 
     async deleteByUserId(userId: string): Promise<void> {
          await pool.execute(
-            'DELETE FROM refreshtokens WHERE userId = ?', 
+            'DELETE FROM refresh_tokens WHERE userId = ?', 
             [userId]
         );
     }

@@ -1,27 +1,40 @@
 import { Location } from "@domain/entities/Location";
 import { ILocationRepository } from "@domain/repositories/ILocationRepository";
 import { pool } from "../connection";
+import { RowDataPacket } from "mysql2";
+
+
+interface LocationRow extends RowDataPacket {
+  id: string;
+  companyId: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
+}
 
 export class MysqlLocationRepository implements ILocationRepository {
     
     async findById(id: string, companyId: string): Promise<Location | null> {
-        const [rows] = await pool.execute(
+
+        const [rows] = await pool.execute<LocationRow[]>(
             'SELECT * FROM locations WHERE id = ? AND companyId = ?',
             [id,companyId]
         )
 
-         const results = rows as any[]
-        if (results.length === 0) return null
-        return this.mapToEntity(results[0])
+         
+        if (rows.length === 0) return null
+        return this.mapToEntity(rows[0])
     }
 
     async findByCompanyLocations(companyId: string): Promise<Location[]> {
-        const [rows] = await pool.execute(
+
+        const [rows] = await pool.execute<LocationRow[]>(
             'SELECT * FROM locations WHERE companyId = ?',
             [companyId]
         )
-        const results = rows as any[]
-        return results.map(row => this.mapToEntity(row))
+       
+        return rows.map(row => this.mapToEntity(row))
     }
 
     async save(location: Location): Promise<void> {
@@ -58,7 +71,7 @@ export class MysqlLocationRepository implements ILocationRepository {
     }
 
     // Mapper les résultats SQL vers l'entité Location
-          private mapToEntity(row: any): Location {
+          private mapToEntity(row: LocationRow): Location {
             return new Location(
               row.id,
               row.companyId,
