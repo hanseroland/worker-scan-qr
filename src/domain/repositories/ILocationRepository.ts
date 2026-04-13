@@ -3,4 +3,4 @@ import { IBaseRepository } from './IBaseRepository';
 
 export interface ILocationRepository extends IBaseRepository<Location> {
   findByCompanyLocations(companyId: string): Promise<Location[]>;
-} 
+}

@@ -7,7 +7,7 @@ export class GetUserUseCase {
         private readonly userRepository: IUserRepository
     ){}
 
-    async execute(id:string, companyId:string): Promise<User>{
+    async execute(id:string, companyId?:string): Promise<User>{
         const userExists = await this.userRepository.findById(id, companyId);
         if(!userExists) throw new NotFoundError('User not found');
 

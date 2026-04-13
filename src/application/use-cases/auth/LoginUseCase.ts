@@ -12,7 +12,7 @@ export class LoginUseCase {
   constructor(
     private userRepository: IUserRepository,
     private passwordService: IPasswordService,
-    private jwtTokenService: IJwtTokenService, 
+    private jwtTokenService: IJwtTokenService,
     private refreshTokenRepository: IRefreshTokenRepository,
     private cryptoService: ICryptoService
   ) {}
@@ -39,10 +39,12 @@ export class LoginUseCase {
     const accessToken = this.jwtTokenService.generateAccessToken(existingUser);
 
     // 5. Générer refreshToken
-    const refreshToken = this.jwtTokenService.generateRefreshToken(existingUser);
+    const refreshToken =
+      this.jwtTokenService.generateRefreshToken(existingUser);
 
     // 6. Hash le refreshToken avant de le stocker
-    const hashedRefreshToken = await this.cryptoService.cryptoHash(refreshToken);
+    const hashedRefreshToken =
+      await this.cryptoService.cryptoHash(refreshToken);
 
     // 7. Créer une instance de RefreshToken
     const refreshTokenEntity = new RefreshToken(

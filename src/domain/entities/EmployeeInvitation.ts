@@ -12,6 +12,6 @@ export class EmployeeInvitation extends TenantEntity {
     public expiresAt: Date,
     public readonly createdAt: Date
   ) {
-    super(companyId); 
+    super(companyId);
   }
 }

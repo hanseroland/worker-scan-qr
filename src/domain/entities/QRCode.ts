@@ -11,4 +11,4 @@ export class QRCode extends TenantEntity {
   ) {
     super(companyId);
   }
-} 
+}

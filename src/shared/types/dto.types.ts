@@ -59,9 +59,18 @@ export type CreateUserDTO = Omit<
   | 'resetPasswordExpires'
 >;
 
-export type UpdateUserDTO = Partial<Omit<User, 'id' | 'createdAt' | 'password' 
-  | 'activationToken' | 'activationTokenExpires' 
-  | 'resetPasswordToken' | 'resetPasswordExpires'>>
+export type UpdateUserDTO = Partial<
+  Omit<
+    User,
+    | 'id'
+    | 'createdAt'
+    | 'password'
+    | 'activationToken'
+    | 'activationTokenExpires'
+    | 'resetPasswordToken'
+    | 'resetPasswordExpires'
+  >
+>;
 
 /**
  * DTOs Création d'un refresh token
@@ -73,52 +82,60 @@ export type CreateRefreshTokenDTO = Omit<RefreshToken, 'id' | 'createdAt'>;
  * DTOs pour Location
  */
 
-export type CreateLocationDTO = Omit<Location,'id'>;
+export type CreateLocationDTO = Omit<Location, 'id'>;
 
-export type UpdateLocationDTO = Partial<
-  Omit<Location, 'id' | 'companyId'>
->;
- 
+export type UpdateLocationDTO = Partial<Omit<Location, 'id' | 'companyId'>>;
+
 export type LocationResponseDTO = Location;
 
 /**
  * DTOs pour EmployeeInvitation
  */
 
-export type CreateEmployeeInvitationDTO = Omit<EmployeeInvitation, 'id' | 'status' | 'token' | 'createdAt' | 'expiresAt'>;
+export type CreateEmployeeInvitationDTO = Omit<
+  EmployeeInvitation,
+  'id' | 'status' | 'token' | 'createdAt' | 'expiresAt'
+>;
 
-export type UpdateInvitationDTO = Partial<Omit<EmployeeInvitation, 'id' | 'companyId' | 'employeeId' | 'createdAt'>>;
+export type UpdateInvitationDTO = Partial<
+  Omit<EmployeeInvitation, 'id' | 'companyId' | 'employeeId' | 'createdAt'>
+>;
 
 export type AcceptInvitationDTO = {
-  token: string
-}
+  token: string;
+};
 
 /**
  * DTOs QRCodeScan
  */
 
-export type CreateQRCodeDTO = Omit<QRCode, 'id' | 'code' | 'expiresAt' | 'isActive'>
-export type UpdateQRCodeDTO = Partial<Omit<QRCode, 'id' | 'companyId' | 'locationId'>>
+export type CreateQRCodeDTO = Omit<
+  QRCode,
+  'id' | 'code' | 'expiresAt' | 'isActive'
+>;
+export type UpdateQRCodeDTO = Partial<
+  Omit<QRCode, 'id' | 'companyId' | 'locationId'>
+>;
 
 /**
  * DTOs pour PointageEvent
  */
 
 export type CreatePointageEventDTO = {
-  employeeId: string
-  companyId: string      
-  qrCode: string         
-  latitude: number
-  longitude: number
-}
+  employeeId: string;
+  companyId: string;
+  qrCode: string;
+  latitude: number;
+  longitude: number;
+};
 
 export type PointageEventResponseDTO = {
-  id: string
-  employeeId: string
-  companyId: string
-  type: PointageType
-  scannedAt: Date
-  latitude: number
-  longitude: number
-  isValide: boolean
-}
+  id: string;
+  employeeId: string;
+  companyId: string;
+  type: PointageType;
+  scannedAt: Date;
+  latitude: number;
+  longitude: number;
+  isValide: boolean;
+};

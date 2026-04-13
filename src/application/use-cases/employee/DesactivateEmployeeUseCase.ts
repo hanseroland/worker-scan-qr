@@ -15,4 +15,3 @@ export class DesactivateEmployeeUseCase {
     await this.employeeRepository.update(employee);
   }
 }
- 

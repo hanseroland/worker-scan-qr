@@ -10,6 +10,5 @@ export class Location extends TenantEntity {
     public radius: number
   ) {
     super(companyId);
-  } 
+  }
 }
- 

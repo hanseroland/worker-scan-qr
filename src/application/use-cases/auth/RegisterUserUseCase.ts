@@ -29,7 +29,8 @@ export class RegisterUserUseCase {
     const activationToken = this.cryptoService.generateActivationToken();
 
     // 4 Hash le token d'activation pour le stocker
-    const hashedActivationToken = await this.cryptoService.cryptoHash(activationToken);
+    const hashedActivationToken =
+      await this.cryptoService.cryptoHash(activationToken);
 
     // 5. Créer l'expiration du token d'activation (24h)
     const activationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
@@ -40,7 +41,7 @@ export class RegisterUserUseCase {
       dto.email,
       hashedPassowd,
       dto.role,
-      dto.companyId,
+      dto.companyId || null,
       dto.employeeId,
       false, // isActive
       hashedActivationToken,
