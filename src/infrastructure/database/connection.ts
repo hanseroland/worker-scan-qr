@@ -1,5 +1,5 @@
-import mysql from 'mysql2/promise'
-import { config } from '@shared/config'
+import mysql from 'mysql2/promise';
+import { config } from '@shared/config';
 
 // Créer un pool de connexions
 export const pool = mysql.createPool({
@@ -10,5 +10,5 @@ export const pool = mysql.createPool({
   database: config.db.name,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0         
-})
+  queueLimit: 0,
+});

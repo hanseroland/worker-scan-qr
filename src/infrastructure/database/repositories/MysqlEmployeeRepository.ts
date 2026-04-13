@@ -70,8 +70,19 @@ export class MysqlEmployeeRepository implements IEmployeeRepository{
         `UPDATE employees 
         SET companyId = ?, userId = ?, firstName = ?, lastName = ?, picture = ?, email = ?, phone = ?, employeeCode = ?,
          isActive = ? WHERE id = ? AND companyId = ? `,
-        [employee.companyId, employee.userId, employee.firstName, employee.lastName, employee.picture, employee.email,
-         employee.phone, employee.employeeCode, employee.isActive, employee.id, employee.companyId]
+        [
+            employee.companyId,
+            employee.userId,
+            employee.firstName, 
+            employee.lastName, 
+            employee.picture, 
+            employee.email,
+            employee.phone, 
+            employee.employeeCode,
+            employee.isActive, 
+            employee.id, 
+            employee.companyId
+        ]
     )
     }
 
