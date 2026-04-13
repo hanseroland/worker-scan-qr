@@ -36,11 +36,20 @@ export class LoginUseCase {
     if (!isPasswordValid) throw new AuthError('Invalid password');
 
     // 4. Générer accessToken
-    const accessToken = this.jwtTokenService.generateAccessToken(existingUser);
+    const accessToken = this.jwtTokenService.generateAccessToken(
+      {
+        id: existingUser.id,
+        role: existingUser.role,
+        companyId: existingUser.companyId,
+        employeeId: existingUser.employeeId
+      }
+    );
 
     // 5. Générer refreshToken
     const refreshToken =
-      this.jwtTokenService.generateRefreshToken(existingUser);
+      this.jwtTokenService.generateRefreshToken({
+        id: existingUser.id
+      });
 
     // 6. Hash le refreshToken avant de le stocker
     const hashedRefreshToken =
