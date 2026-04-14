@@ -3,6 +3,8 @@ import { DeleteCompanyUseCase } from "@application/use-cases/company/DeleteCompa
 import { GetAllCompaniesUseCase } from "@application/use-cases/company/GetAllCompaniesUseCase";
 import { GetCompanyUseCase } from "@application/use-cases/company/GetCompanyUseCase";
 import { UpdateCompanyUseCase } from "@application/use-cases/company/UpdateCompanyUseCase";
+import { UploadCompanyLogoUseCase } from "@application/use-cases/company/UploadCompanyLogoUseCase";
+import { ValidationError } from "@shared/errors/ValidationError";
 import { CreateCompanyDTO, UpdateCompanyDTO } from "@shared/types/dto.types";
 import { NextFunction,Request,Response} from "express";
 
@@ -12,7 +14,8 @@ export class CompanyController {
         private getCompanyUseCase: GetCompanyUseCase,
         private getAllCompaniesUseCase: GetAllCompaniesUseCase,
         private updateCompanyUseCase: UpdateCompanyUseCase,
-        private deleteCompanyUseCase: DeleteCompanyUseCase
+        private deleteCompanyUseCase: DeleteCompanyUseCase,
+        private uploadCompanyLogoUseCase: UploadCompanyLogoUseCase
     ){}
 
     create = async (req: Request<{}, {}, CreateCompanyDTO>, res: Response, next: NextFunction) => {
@@ -57,6 +60,24 @@ export class CompanyController {
         }
   }
 
+   uploadLogo = async (req: Request<{id:string}, {},{}>, res: Response, next: NextFunction) => {
+        try {
+            if (!req.file) {
+                throw new ValidationError("No file uploaded");
+            }
+            const companyId = req.params.id;
+            const filePath = req.file.path;
+
+            const logoUrl = await this.uploadCompanyLogoUseCase.execute(
+                companyId,
+                filePath
+            );
+            return res.status(200).json({data:logoUrl});
+        } catch (error) {
+            next(error);
+        }
+    }
+
   update = async (req: Request<{id:string}, {}, UpdateCompanyDTO>, res: Response, next: NextFunction)=>{
     try {
         const company = await this.updateCompanyUseCase.execute(req.params.id,req.body);
@@ -75,11 +96,7 @@ export class CompanyController {
   delete = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
         await this.deleteCompanyUseCase.execute(req.params.id);
-         res.status(204).send(
-            {
-                success:true,
-            }
-          )
+         res.status(204).send()
     } catch (error) {
         next(error)
     }
