@@ -64,6 +64,7 @@ export class CompanyController {
             {
                 success:true,
                 data:company
+                
             }
           )
     } catch (error) {
