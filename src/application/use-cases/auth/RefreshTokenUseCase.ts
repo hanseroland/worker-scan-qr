@@ -29,7 +29,14 @@ export class RefreshTokenUseCase {
     }
 
     // 3. Générer un nouveau accessToken
-    const accessToken = this.jwtTokenService.generateAccessToken(user);
+    const accessToken = this.jwtTokenService.generateAccessToken(
+      {
+        id: user.id,
+        role: user.role,
+        companyId: user.companyId,
+        employeeId: user.employeeId
+      }
+    );
 
     return { accessToken };
   }
