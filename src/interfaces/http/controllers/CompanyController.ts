@@ -20,43 +20,43 @@ export class CompanyController {
 
     create = async (req: Request<{}, {}, CreateCompanyDTO>, res: Response, next: NextFunction) => {
       try {
-      const company = await this.createCompanyUseCase.execute(req.body)
+      const result = await this.createCompanyUseCase.execute(req.body);
       res.status(201)
         .json(
             { 
                 success: true, 
-                data: company 
-            })
+                data: result 
+            });
     } catch (error) {
-      next(error)
+      next(error);
     }
    }
 
    getById = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
-        const company = await this.getCompanyUseCase.execute(req.params.id);
+        const result = await this.getCompanyUseCase.execute(req.params.id);
         res.status(200).json(
             {
                 success:true,
-                data:company
+                data:result
             }
-        )
+        );
     } catch (error) {
-        next(error)
+        next(error);
     }
   }
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-          const companies = await this.getAllCompaniesUseCase.execute();
+          const result = await this.getAllCompaniesUseCase.execute();
           res.status(200).json(
             {
                 success:true,
-                data:companies
+                data:result
             }
-          )
+          );
         } catch (error) {
-            next(error)
+            next(error);
         }
   }
 
@@ -80,16 +80,16 @@ export class CompanyController {
 
   update = async (req: Request<{id:string}, {}, UpdateCompanyDTO>, res: Response, next: NextFunction)=>{
     try {
-        const company = await this.updateCompanyUseCase.execute(req.params.id,req.body);
+        const result = await this.updateCompanyUseCase.execute(req.params.id,req.body);
          res.status(200).json(
             {
                 success:true,
-                data:company
+                data:result
                 
             }
-          )
+          );
     } catch (error) {
-        next(error)
+        next(error);
     }
   }
 
