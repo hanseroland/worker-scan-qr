@@ -22,11 +22,11 @@ export class MysqlEmployeeInvitationRepository
   implements IEmployeeInvitationRepository
 {
 
-  async findById(id: string, companyId?: string): Promise<EmployeeInvitation | null> {
+  async findById(id: string, companyId: string): Promise<EmployeeInvitation | null> {
     const [rows] = await pool.execute<EmployeeInvitationRow[]>(
-      `SELECT * FROM employee_invitations WHERE id = ? AND (? IS NULL OR companyId = ?)`,
-      [id, companyId ?? null, companyId ?? null]
-    );
+      `SELECT * FROM employee_invitations WHERE id = ? AND companyId = ?)`,
+      [id, companyId]
+    ); 
 
     if (rows.length === 0) return null;
 
