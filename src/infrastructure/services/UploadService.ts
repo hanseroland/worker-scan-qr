@@ -5,8 +5,8 @@ import { IUploadService } from '@domain/services/IUploadService';
 export class UploadService implements IUploadService {
   async uploadImage(filePath: string): Promise<string> {
     // Simulate file upload and return a URL
-    const fileUrl = `/public/profile/${filePath}`;
-    return fileUrl;
+    const fileName = path.basename(filePath);
+    return `/uploads/${fileName}`;
   }
 
   async deleteImage(imageUrl: string): Promise<void> {

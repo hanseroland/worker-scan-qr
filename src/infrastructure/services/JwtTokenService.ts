@@ -7,7 +7,7 @@ export class JwtTokenService implements IJwtTokenService {
     return jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.expiresIn as jwt.SignOptions['expiresIn'],
     });
-  }
+  } 
 
   generateRefreshToken(payload: string | Buffer | object): string {
     return jwt.sign(payload, config.jwt.refreshSecret, {
