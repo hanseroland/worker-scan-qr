@@ -4,8 +4,8 @@ import { NotFoundError } from '@shared/errors/NotFoundError';
 export class DeleteUserUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async execute(id: string): Promise<void> {
-    const userExists = await this.userRepository.findById(id);
+  async execute(id: string,companyId:string): Promise<void> {
+    const userExists = await this.userRepository.findById(id,companyId);
     if (!userExists) throw new NotFoundError('User not found');
 
     userExists.isActive = false;
