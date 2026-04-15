@@ -4,6 +4,7 @@ import { GetAllCompaniesUseCase } from "@application/use-cases/company/GetAllCom
 import { GetCompanyUseCase } from "@application/use-cases/company/GetCompanyUseCase";
 import { UpdateCompanyUseCase } from "@application/use-cases/company/UpdateCompanyUseCase";
 import { UploadCompanyLogoUseCase } from "@application/use-cases/company/UploadCompanyLogoUseCase";
+import { UserRole } from "@shared/enums";
 import { ValidationError } from "@shared/errors/ValidationError";
 import { CreateCompanyDTO, UpdateCompanyDTO } from "@shared/types/dto.types";
 import { NextFunction,Request,Response} from "express";
@@ -34,6 +35,19 @@ export class CompanyController {
 
    getById = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
+
+        const { id: requestedId } = req.params;
+        const user = req.user;
+
+        const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+        const isOwner = user?.companyId === requestedId;
+
+        if (!isSuperAdmin && !isOwner) {
+            return res.status(403).json({
+                success: false,
+                message: "You can't see another comapny's detail"
+            });
+        }
         const result = await this.getCompanyUseCase.execute(req.params.id);
         res.status(200).json(
             {
