@@ -25,7 +25,7 @@ export class CryptoService implements ICryptoService {
     return otp;
   }
 
-  generateQRcode(
+  generateQRCode(
     locationId: string,
     companyId: string,
     timestamp: number
