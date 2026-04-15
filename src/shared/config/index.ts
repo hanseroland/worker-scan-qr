@@ -6,6 +6,7 @@ interface Config {
     companyName: string;
     port: number;
     env: string;
+    cookieDomain: string;
     apiUrl: string;
     corsOriginLocal: string;
     corsOriginProd: string;
@@ -51,6 +52,9 @@ export const config: Config = {
     companyName: process.env.COMPANY_NAME || 'Worker Scan QR',
     port: Number(process.env.PORT) || 5000,
     env: process.env.NODE_ENV || 'development',
+    cookieDomain: process.env.NODE_ENV === 'production' 
+        ? '.ton-domaine-final.com'
+        : 'localhost',
     apiUrl: process.env.API_URL || '/api/v1',
     corsOriginLocal:
       process.env.CORS_ORIGIN_LOCAL ||
