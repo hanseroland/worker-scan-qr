@@ -50,11 +50,11 @@ export class AuthController {
         }
     }
 
-    activateAccount = async (req:Request<{activationToken:string},{},{}>, res:Response, next:NextFunction)=> {
+    activateAccount = async (req:Request<{token:string},{},{}>, res:Response, next:NextFunction)=> {
 
         try {
             const result = await this.activateAccountUseCase.execute(
-                req.params.activationToken
+                req.params.token
             );
             res.status(200)
                 .json(
@@ -97,12 +97,12 @@ export class AuthController {
         }
     }
 
-    resetPassword = async (req:Request<{token:string},{},{password:string}>, res:Response, next:NextFunction)=> {
+    resetPassword = async (req:Request<{token:string},{},{newPassword:string}>, res:Response, next:NextFunction)=> {
 
         try {
             await this.resetPasswordUseCase.execute(
                 req.params.token,
-                req.body.password
+                req.body.newPassword
             );
 
             res.status(200)
