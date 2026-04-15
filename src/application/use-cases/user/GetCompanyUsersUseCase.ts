@@ -9,6 +9,8 @@ export class GetCompanyUsersUseCase {
   async execute(companyId:string): Promise<SafeUserDTO[]> {
     const users = await this.userRepository.findAllByCompanyId(companyId);
 
+    if (!users) return [];
+
     return users.map(user => {
         const { 
           password: _p, 
