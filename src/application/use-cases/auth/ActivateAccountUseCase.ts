@@ -2,6 +2,7 @@ import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { ICryptoService } from '@domain/services/ICryptoService';
 import { AuthError } from '@shared/errors/AuthError';
 import { NotFoundError } from '@shared/errors/NotFoundError';
+import { SafeUserDTO } from '@shared/types/dto.types';
 
 // Retourne : User
 export class ActivationAccountUseCase {
@@ -10,7 +11,7 @@ export class ActivationAccountUseCase {
     private cryptoService: ICryptoService
   ) {}
 
-  async execute(token: string) {
+  async execute(token: string): Promise<SafeUserDTO> {
     // 1. Hash le token reçu
     const hashedToken = await this.cryptoService.cryptoHash(token);
 
@@ -36,6 +37,15 @@ export class ActivationAccountUseCase {
     // 6. Enregistrer les changements dans la base de données
     await this.userRepository.update(existingUser);
 
-    return existingUser;
+    const { 
+        password: _p, 
+        activationToken: _at, 
+        activationTokenExpires: _ate,
+        resetPasswordToken: _rpt,
+        resetPasswordExpires: _rpe,
+        ...safeUser 
+    } = existingUser;
+
+    return safeUser as SafeUserDTO;
   }
 }

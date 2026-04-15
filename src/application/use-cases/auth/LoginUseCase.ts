@@ -69,7 +69,7 @@ export class LoginUseCase {
 
     // 9. Retourner les tokens
     return {
-      user: existingUser,
+      user: existingUser as SafeUserDTO,
       accessToken,
       refreshToken,
     };
