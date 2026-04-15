@@ -1,5 +1,4 @@
 import { DeleteUserUseCase } from "@application/use-cases/user/DeleteUserUseCase";
-import { GetAllUserUseCase } from "@application/use-cases/user/GetAllUserUseCase";
 import { GetCompanyUsersUseCase } from "@application/use-cases/user/GetCompanyUsersUseCase";
 import { GetUserUseCase } from "@application/use-cases/user/GetUserUseCase";
 import { UpdateUserUseCase } from "@application/use-cases/user/UpdateUserUseCase";
@@ -10,7 +9,6 @@ export class UserController {
     constructor(
         private getCompanyUsersUseCase: GetCompanyUsersUseCase,
         private getUserUseCase: GetUserUseCase,
-        private getAllUserUseCase: GetAllUserUseCase,
         private updateUserUseCase: UpdateUserUseCase,
         private deleteUserUseCase: DeleteUserUseCase,
     ){}
@@ -18,7 +16,10 @@ export class UserController {
    
    getById = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
-        const result = await this.getUserUseCase.execute(req.params.id);
+        const result = await this.getUserUseCase.execute(
+            req.params.id,
+            req.user?.companyId || undefined
+        );
         res.status(200).json(
             {
                 success:true,
@@ -44,24 +45,15 @@ export class UserController {
     }
   }
 
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          const result = await this.getAllUserUseCase.execute();
-          res.status(200).json(
-            {
-                success:true,
-                data:result
-            }
-          );
-        } catch (error) {
-            next(error);
-        }
-  }
 
   
   update = async (req: Request<{id:string}, {}, UpdateUserDTO>, res: Response, next: NextFunction)=>{
     try {
-        const result = await this.updateUserUseCase.execute(req.params.id,req.body);
+        const result = await this.updateUserUseCase.execute(
+            req.params.id,
+            req.body,
+            req.user?.companyId || undefined
+        );
          res.status(200).json(
             {
                 success:true,
@@ -76,7 +68,10 @@ export class UserController {
 
   delete = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
-        await this.deleteUserUseCase.execute(req.params.id);
+        await this.deleteUserUseCase.execute(
+            req.params.id,
+            req.user?.companyId || undefined
+        );
          res.status(204).send()
     } catch (error) {
         next(error)
