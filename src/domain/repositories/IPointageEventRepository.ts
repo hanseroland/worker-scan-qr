@@ -11,3 +11,4 @@ export interface IPointageEventRepository extends IBaseRepository<PointageEvent>
     companyId: string
   ): Promise<PointageEvent | null>;
 }
+ 
