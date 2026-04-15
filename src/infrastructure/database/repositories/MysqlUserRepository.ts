@@ -22,8 +22,13 @@ interface UserRow extends RowDataPacket {
 export class MysqlUserRepository implements IUserRepository{
 
      async findById(id: string, companyId?: string): Promise<User | null> {
+         const query  = companyId 
+               ? 'SELECT * FROM users WHERE id = ? AND companyId = ?' 
+               : 'SELECT * FROM users WHERE id = ?';
+         const params  = companyId ? [id,companyId] : [id]
          const [rows] = await pool.execute<UserRow[]>(
-            'SELECT * FROM users WHERE id = ?',[id]
+            query,
+            params
          )
         
         if (rows.length === 0) return null
@@ -51,14 +56,6 @@ export class MysqlUserRepository implements IUserRepository{
         return this.mapToEntity(rows[0])
      }
 
-   
-
-     async findAll(): Promise<User[]> {
-        const [rows] = await pool.execute<UserRow[]>
-        ('SELECT * FROM users')
-        
-        return rows.map(row => this.mapToEntity(row))
-     }
 
      async findByActivationToken(hashedActivationToken: string): Promise<User | null> {
          const [rows] = await pool.execute<UserRow[]>(
@@ -134,8 +131,10 @@ export class MysqlUserRepository implements IUserRepository{
         );
     }
 
-    async delete(id: string): Promise<void> {
-        await pool.execute('UPDATE users SET isActive = ?  WHERE id = ?', [false, id]);
+    async delete(id: string, companyId:string): Promise<void> {
+        await pool.execute(
+         'UPDATE users SET isActive = ?  WHERE id = ? AND companyId = ?', 
+         [false, id,companyId]);
     }
 
     // Mapper les résultats SQL vers l'entité User
