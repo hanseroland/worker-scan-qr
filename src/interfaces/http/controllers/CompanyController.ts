@@ -45,7 +45,7 @@ export class CompanyController {
         if (!isSuperAdmin && !isOwner) {
             return res.status(403).json({
                 success: false,
-                message: "You can't see another comapny's detail"
+                message: "Unauthorized access"
             });
         }
         const result = await this.getCompanyUseCase.execute(req.params.id);

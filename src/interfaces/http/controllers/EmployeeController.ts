@@ -4,6 +4,7 @@ import { GetAllEmployeesUseCase } from "@application/use-cases/employee/GetAllEm
 import { GetEmployeeUseCase } from "@application/use-cases/employee/GetEmployeeUseCase";
 import { UpdateEmployeeUseCase } from "@application/use-cases/employee/UpdateEmployeeUseCase";
 import { UploadEmployeePictureUseCase } from "@application/use-cases/employee/UploadEmployeePictureUseCase";
+import { UserRole } from "@shared/enums";
 import { AuthError } from "@shared/errors/AuthError";
 import { ValidationError } from "@shared/errors/ValidationError";
 import {CreateEmployeeDTO, UpdateEmployeeDTO } from "@shared/types/dto.types";
@@ -21,13 +22,30 @@ export class EmployeeController {
 
     create = async (req: Request<{}, {}, CreateEmployeeDTO>, res: Response, next: NextFunction) => {
       try {
-      const result = await this.createEmployeeUseCase.execute(req.body);
-      res.status(201)
-        .json(
-            { 
-                success: true, 
-                data: result 
-            })
+
+        // 1. Déterminer le companyId cible
+        const companyId = req.user?.role === 'SUPER_ADMIN' 
+            ? req.body.companyId 
+            : req.user?.companyId;
+
+        // 2. Validation stricte : Si on n'a pas de companyId à ce stade, c'est une erreur
+        if (!companyId) {
+            throw new ValidationError("Company should be specify to create an employee.");
+        }
+
+        // 3. Construction du payload garanti
+        const payload: CreateEmployeeDTO = {
+            ...req.body,
+            companyId: companyId 
+        };
+
+        const result = await this.createEmployeeUseCase.execute(payload);
+        res.status(201)
+            .json(
+                { 
+                    success: true, 
+                    data: result 
+                })
     } catch (error) {
       next(error)
     }
@@ -64,6 +82,18 @@ export class EmployeeController {
   getAll = async (req: Request<{companyId:string}>, res: Response, next: NextFunction) => {
         try {
         
+          const { companyId: requestedId } = req.params;
+                const user = req.user;
+            
+                const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+                const isOwner = user?.companyId === requestedId;
+            
+                if (!isSuperAdmin && !isOwner) {
+                    return res.status(403).json({
+                            success: false,
+                            message: "Unauthorized access"
+                         });
+            }
           const companyId = req.params.companyId
           const result = await this.getAllEmployeeUseCase.execute(companyId);
           res.status(200).json(
