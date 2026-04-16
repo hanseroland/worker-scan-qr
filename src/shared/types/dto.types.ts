@@ -37,6 +37,12 @@ export type EmployeeListItemDTO = Pick<
   Employee,
   'id' | 'firstName' | 'lastName' | 'email' | 'isActive'
 >;
+
+export type SafeEmployeeDTO = Omit<
+  Employee,
+  | 'userId'
+  | 'employeeCode'
+>;
 /**
  * DTOs pour User
  */
