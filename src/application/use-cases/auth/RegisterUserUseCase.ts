@@ -5,12 +5,14 @@ import { CreateUserDTO, SafeUserDTO } from '@shared/types/dto.types';
 import { randomUUID } from 'crypto';
 import { ICryptoService } from '@domain/services/ICryptoService';
 import { IPasswordService } from '@domain/services/IPasswordService';
+import { IEmailService } from '@domain/services/IEmailService';
 
 export class RegisterUserUseCase {
   constructor(
     private userRepository: IUserRepository,
     private passwordService: IPasswordService,
-    private cryptoService: ICryptoService
+    private cryptoService: ICryptoService,
+    private emailService: IEmailService
   ) {}
 
   async execute(
@@ -53,6 +55,9 @@ export class RegisterUserUseCase {
 
     // 7. Enregistrer l'utilisateur dans la base de données
     await this.userRepository.save(userEntity);
+
+    await this.emailService.sendWelcomeEmail(userEntity.email, activationToken);
+      
 
     const { 
         password, 

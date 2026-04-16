@@ -1,18 +1,20 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
 import { ICryptoService } from '@domain/services/ICryptoService';
+import { IEmailService } from '@domain/services/IEmailService';
 
 export class ForgotPasswordUseCase {
   constructor(
     private userRepository: IUserRepository,
-    private cryptoService: ICryptoService
+    private cryptoService: ICryptoService,
+    private emailService : IEmailService
   ) {}
 
-  async execute(email: string): Promise<{ resetToken: string }> {
+  async execute(email: string): Promise<void> {
     // 1. Chercher user
     const existingUser = await this.userRepository.findByEmail(email);
     if (!existingUser) {
       // Ne pas révéler que l'email n'existe pas pour des raisons de sécurité
-      return { resetToken: '' };
+      return;
     }
 
     // 2. Générer resetPasswordToken
@@ -25,8 +27,12 @@ export class ForgotPasswordUseCase {
     existingUser.resetPasswordToken = hashedResetToken;
     existingUser.resetPasswordExpires = new Date(resetTokenExpires);
 
+    // 4. Mise à jour des données
     await this.userRepository.update(existingUser);
 
-    return { resetToken };
+    // 5. Envoie de l'email avec le token en clair
+    this.emailService.sendResetPasswordEmail(email, resetToken).catch(err => {
+        console.error(`Erreur envoi email reset à ${email}:`, err);
+    });
   }
 }

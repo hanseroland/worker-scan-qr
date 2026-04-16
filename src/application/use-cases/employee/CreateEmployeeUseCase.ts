@@ -1,6 +1,7 @@
 import { Employee } from '@domain/entities/Employee';
 import { ICompanyRepository } from '@domain/repositories/ICompanyRepository';
 import { IEmployeeRepository } from '@domain/repositories/IEmployeeRepository';
+import { IEmailService } from '@domain/services/IEmailService';
 import { NotFoundError } from '@shared/errors/NotFoundError';
 import { ValidationError } from '@shared/errors/ValidationError';
 import { CreateEmployeeDTO } from '@shared/types/dto.types';
@@ -9,10 +10,11 @@ import { randomUUID } from 'crypto';
 export class CreateEmployeeUseCase {
   constructor(
     private readonly employeeRepository: IEmployeeRepository,
-    private readonly companyRepository: ICompanyRepository
+    private readonly companyRepository: ICompanyRepository,
+    private readonly emailService : IEmailService
   ) {}
 
-  async execute(dto: CreateEmployeeDTO): Promise<Employee> {
+  async execute(dto: CreateEmployeeDTO): Promise<void> {
     // 1. Vérifier que la Company existe
     const companyExists = await this.companyRepository.findById(dto.companyId);
     if (!companyExists) {
@@ -58,9 +60,20 @@ export class CreateEmployeeUseCase {
       true,
       new Date()
     );
-
-    // 5.  Sauvegarder l'employé et retourner
+    
+    try {
+       // 5.  Sauvegarder l'employé et retourner
     await this.employeeRepository.save(employee);
-    return employee;
+    
+    await this.emailService.sendEmployeeCode(
+            employee.email, 
+            employeeCode, 
+            companyExists?.name || 'Votre Entreprise'
+    );
+    } catch (error) {
+      console.error("L'employé a été créé mais l'email n'est pas parti", error);
+    }
+   
+
   }
 }
