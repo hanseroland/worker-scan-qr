@@ -8,14 +8,14 @@ export class EmailService implements IEmailService {
 
   // En-tête des e-mails pour la marque
   private emailHeader = `<div style="background-color: #f4f4f4; padding: 20px; text-align: center;">
-                                <h1 style="color: #1b1d9a;">Resume AI</h1>
+                                <h1 style="color: #1b1d9a;">${config.app.companyName}</h1>
                             </div>`;
   // Pied de page des e-mails
   private getEmailFooter() {
     return `
         <div style="text-align: center; margin-top: 20px; color: #888;">
         <p>Ce mail a été envoyé automatiquement, veuillez ne pas y répondre.</p>
-        <p>© ${new Date().getFullYear()} Resume AI. Tous droits réservés.</p>
+        <p>© ${new Date().getFullYear()} ${config.app.companyName}. Tous droits réservés.</p>
         </div>
     `;
   }
