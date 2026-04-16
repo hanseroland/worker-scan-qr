@@ -36,8 +36,7 @@ export class AuthController {
 
     register = async (req:Request<{},{},CreateUserDTO>, res:Response, next:NextFunction)=> {
          try {
-            const { user, activationToken } = await this.registerUserUseCase.execute(req.body);
-            await this.emailService.sendWelcomeEmail(user.email, activationToken)
+            const user = await this.registerUserUseCase.execute(req.body);
 
             res.status(201)
                 .json(
@@ -107,10 +106,9 @@ export class AuthController {
 
     forgotPassword = async (req:Request<{},{},{email:string}>, res:Response, next:NextFunction)=> {
         try {
-            const {resetToken} = await this.forgotPasswordUseCase.execute(req.body.email);
-            if (resetToken) {
-                await this.emailService.sendResetPasswordEmail(req.body.email, resetToken);
-            }
+           
+            await this.forgotPasswordUseCase.execute(req.body.email);
+           
             res.status(200)
                 .json(
                     { 
