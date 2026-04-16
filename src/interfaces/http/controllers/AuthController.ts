@@ -5,7 +5,6 @@ import { LoginUseCase } from "@application/use-cases/auth/LoginUseCase";
 import { RefreshTokenUseCase } from "@application/use-cases/auth/RefreshTokenUseCase";
 import { RegisterUserUseCase } from "@application/use-cases/auth/RegisterUserUseCase";
 import { ResetPasswordUseCase } from "@application/use-cases/auth/ResetPasswordUseCase";
-import { IEmailService } from "@domain/services/IEmailService";
 import { config } from "@shared/config";
 import { CreateUserDTO } from "@shared/types/dto.types";
 import { NextFunction,Request,Response} from "express";
@@ -18,7 +17,6 @@ export class AuthController {
         private refreshTokenUseCase: RefreshTokenUseCase,
         private registerUserUseCase: RegisterUserUseCase,
         private resetPasswordUseCase : ResetPasswordUseCase,
-        private emailService : IEmailService
     ){}
 
     private setRefreshTokenCookie(res: Response, token: string) {
