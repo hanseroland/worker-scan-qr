@@ -24,6 +24,13 @@ export class LocationController {
 
     create = async (req: Request<{}, {}, CreateLocationDTO>, res: Response, next: NextFunction) => {
         try {
+            const companyId = req.user?.companyId;
+            const isCompanyAdmin = req.user?.role === UserRole.COMPANY_ADMIN;
+
+            if(!companyId && !isCompanyAdmin){
+                return next(new AuthError("Unauthorized"));
+            }
+
             const result = await this.createLocationUseCase.execute(req.body);
             res.status(201).json({
                 success: true,
@@ -123,7 +130,7 @@ export class LocationController {
 
             const locationId = req.params.locationId;
             await this.deleteLocationUseCase.execute(locationId, companyId);
-            res.status(204).send()
+            res.status(204).send({success:true})
         } catch (error) {
             next(error)
         }
