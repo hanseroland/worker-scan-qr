@@ -7,7 +7,7 @@ import { UploadCompanyLogoUseCase } from "@application/use-cases/company/UploadC
 import { UserRole } from "@shared/enums";
 import { ValidationError } from "@shared/errors/ValidationError";
 import { CreateCompanyDTO, UpdateCompanyDTO } from "@shared/types/dto.types";
-import { NextFunction,Request,Response} from "express";
+import { NextFunction, Request, Response } from "express";
 
 export class CompanyController {
     constructor(
@@ -17,64 +17,64 @@ export class CompanyController {
         private updateCompanyUseCase: UpdateCompanyUseCase,
         private deleteCompanyUseCase: DeleteCompanyUseCase,
         private uploadCompanyLogoUseCase: UploadCompanyLogoUseCase
-    ){}
+    ) { }
 
     create = async (req: Request<{}, {}, CreateCompanyDTO>, res: Response, next: NextFunction) => {
-      try {
-      const result = await this.createCompanyUseCase.execute(req.body);
-      res.status(201)
-        .json(
-            { 
-                success: true, 
-                data: result 
-            });
-    } catch (error) {
-      next(error);
-    }
-   }
-
-   getById = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
-    try {
-
-        const { id: requestedId } = req.params;
-        const user = req.user;
-
-        const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
-        const isOwner = user?.companyId === requestedId;
-
-        if (!isSuperAdmin && !isOwner) {
-            return res.status(403).json({
-                success: false,
-                message: "Unauthorized access"
-            });
-        }
-        const result = await this.getCompanyUseCase.execute(req.params.id);
-        res.status(200).json(
-            {
-                success:true,
-                data:result
-            }
-        );
-    } catch (error) {
-        next(error);
-    }
-  }
-
-  getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-          const result = await this.getAllCompaniesUseCase.execute();
-          res.status(200).json(
-            {
-                success:true,
-                data:result
-            }
-          );
+            const result = await this.createCompanyUseCase.execute(req.body);
+            res.status(201)
+                .json(
+                    {
+                        success: true,
+                        data: result
+                    });
         } catch (error) {
             next(error);
         }
-  }
+    }
 
-   uploadLogo = async (req: Request<{id:string}, {},{}>, res: Response, next: NextFunction) => {
+    getById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+        try {
+
+            const { id: requestedId } = req.params;
+            const user = req.user;
+
+            const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
+            const isOwner = user?.companyId === requestedId;
+
+            if (!isSuperAdmin && !isOwner) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Unauthorized access"
+                });
+            }
+            const result = await this.getCompanyUseCase.execute(req.params.id);
+            res.status(200).json(
+                {
+                    success: true,
+                    data: result
+                }
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    getAll = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const result = await this.getAllCompaniesUseCase.execute();
+            res.status(200).json(
+                {
+                    success: true,
+                    data: result
+                }
+            );
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    uploadLogo = async (req: Request<{ id: string }, {}, {}>, res: Response, next: NextFunction) => {
         try {
             if (!req.file) {
                 throw new ValidationError("No file uploaded");
@@ -86,33 +86,40 @@ export class CompanyController {
                 companyId,
                 filePath
             );
-            return res.status(200).json({data:logoUrl});
+            return res.status(200).json({ data: logoUrl });
         } catch (error) {
             next(error);
         }
     }
 
-  update = async (req: Request<{id:string}, {}, UpdateCompanyDTO>, res: Response, next: NextFunction)=>{
-    try {
-        const result = await this.updateCompanyUseCase.execute(req.params.id,req.body);
-         res.status(200).json(
-            {
-                success:true,
-                data:result
-                
-            }
-          );
-    } catch (error) {
-        next(error);
-    }
-  }
+    update = async (req: Request<{ id: string }, {}, UpdateCompanyDTO>, res: Response, next: NextFunction) => {
+        try {
 
-  delete = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
-    try {
-        await this.deleteCompanyUseCase.execute(req.params.id);
-         res.status(204).send()
-    } catch (error) {
-        next(error)
+            const isSuperAdmin = req.user?.role === UserRole.SUPER_ADMIN;
+            const isOwner = req.user?.role === UserRole.COMPANY_ADMIN && req.user?.companyId === req.params.id;
+
+            if (!isSuperAdmin && !isOwner) {
+                return res.status(403).json({ success: false, message: "Unauthorized access" });
+            }
+            const result = await this.updateCompanyUseCase.execute(req.params.id, req.body);
+            res.status(200).json(
+                {
+                    success: true,
+                    data: result
+
+                }
+            );
+        } catch (error) {
+            next(error);
+        }
     }
-  }
+
+    delete = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
+        try {
+            await this.deleteCompanyUseCase.execute(req.params.id);
+            res.status(204).send()
+        } catch (error) {
+            next(error)
+        }
+    }
 }
