@@ -17,7 +17,7 @@ export class EmployeeController {
         private getEmployeeUseCase: GetEmployeeUseCase,
         private getAllEmployeeUseCase: GetAllEmployeesUseCase,
         private updateEmployeeUseCase: UpdateEmployeeUseCase,
-        private uploadCompanyPictureUseCase: UploadEmployeePictureUseCase
+        private uploadEmployeePictureUseCase: UploadEmployeePictureUseCase
     ){}
 
     create = async (req: Request<{}, {}, CreateEmployeeDTO>, res: Response, next: NextFunction) => {
@@ -107,32 +107,37 @@ export class EmployeeController {
         }
   }
 
-   uploadPicture = async (req: Request<{employeeId:string}, {},{}>, res: Response, next: NextFunction) => {
-        try {
-            // Sécurité multi-tenant 
-            const companyId = req.user?.companyId;
+   uploadPicture = async (req: Request<{employeeId:string}, {}, {}>, res: Response, next: NextFunction) => {
+    try {
+        const companyId = req.user?.companyId;
+        const isAdmin = req.user?.role === UserRole.SUPER_ADMIN || req.user?.role === UserRole.COMPANY_ADMIN;
+        const isSelf = req.user?.employeeId === req.params.employeeId;
 
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
-
-            if (!req.file) {
-                throw new ValidationError("No file uploaded");
-            }
-
-            const employeeId = req.params.employeeId;
-            const filePath = req.file.path;
-
-            const logoUrl = await this.uploadCompanyPictureUseCase.execute(
-                employeeId,
-                companyId,
-                filePath
-            );
-            return res.status(200).json({data:logoUrl});
-        } catch (error) {
-            next(error);
+        if (!isAdmin && !isSelf) {
+            return res.status(403).json({ success: false, message: "Unauthorized access" });
         }
+
+        if (!companyId) {
+            return next(new AuthError("Unauthorized"));
+        }
+
+        if (!req.file) {
+            throw new ValidationError("No file uploaded");
+        }
+
+        const employeeId = req.params.employeeId;
+        const filePath = req.file.path;
+
+        const logoUrl = await this.uploadEmployeePictureUseCase.execute(
+            employeeId,
+            companyId,
+            filePath
+        );
+        return res.status(200).json({ data: logoUrl });
+    } catch (error) {
+        next(error);
     }
+}
 
   update = async (req: Request<{employeeId:string}, {}, UpdateEmployeeDTO>, res: Response, next: NextFunction)=>{
     try {
