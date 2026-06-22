@@ -40,7 +40,7 @@ export class CompanyController {
             const user = req.user;
 
             const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
-            const isOwner = user?.companyId === requestedId;
+            const isOwner = user?.role === UserRole.COMPANY_ADMIN && user?.companyId === requestedId
 
             if (!isSuperAdmin && !isOwner) {
                 return res.status(403).json({
@@ -79,8 +79,15 @@ export class CompanyController {
             if (!req.file) {
                 throw new ValidationError("No file uploaded");
             }
+
+            const isOwner = req.user?.role === UserRole.COMPANY_ADMIN && req.user?.companyId === req.params.id;
+             if (!isOwner) {
+                return res.status(403).json({ success: false, message: "Unauthorized access" });
+            }
+
             const companyId = req.params.id;
             const filePath = req.file.path;
+
 
             const logoUrl = await this.uploadCompanyLogoUseCase.execute(
                 companyId,
