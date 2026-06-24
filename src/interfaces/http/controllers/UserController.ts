@@ -19,7 +19,7 @@ export class UserController {
         try {
             const result = await this.getUserUseCase.execute(
                 req.params.id,
-                req.user?.companyId || undefined
+                req.user!
             );
             res.status(200).json(
                 {
@@ -48,7 +48,7 @@ export class UserController {
                 });
             }
 
-            const result = await this.getCompanyUsersUseCase.execute(req.params.companyId);
+            const result = await this.getCompanyUsersUseCase.execute(req.params.companyId,req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -77,7 +77,7 @@ export class UserController {
         try {
             await this.deleteUserUseCase.execute(
                 req.params.id,
-                req.user?.companyId || undefined
+                req.user!
             );
             res.status(204).send()
         } catch (error) {
