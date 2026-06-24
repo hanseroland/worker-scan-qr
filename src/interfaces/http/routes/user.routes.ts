@@ -11,10 +11,10 @@ export const userRoutes = (
     const router = Router();
     router.use(authMiddleware(jwtService));
 
-    router.get('/:companyId/company',  userController.getByCompanyId)
+    router.get('/:companyId/company',requireRole(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN), userController.getByCompanyId)
     router.get('/:id', userController.getById)
     router.put('/:id', userController.update)
-    router.delete('/:id', userController.delete)
+    router.delete('/:id',requireRole(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN), userController.delete)
 
     return router;
 }
