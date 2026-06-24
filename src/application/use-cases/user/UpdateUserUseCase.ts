@@ -1,16 +1,32 @@
 import { IUserRepository } from '@domain/repositories/IUserRepository';
+import { UserRole } from '@shared/enums';
+import { AuthError } from '@shared/errors/AuthError';
 import { NotFoundError } from '@shared/errors/NotFoundError';
 import { SafeUserDTO, UpdateUserDTO } from '@shared/types/dto.types';
 
 export class UpdateUserUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async execute(id: string, dto: UpdateUserDTO, companyId?: string): Promise<SafeUserDTO> {
+  async execute(id: string, dto: UpdateUserDTO, requestingUser: { id: string; role: UserRole; companyId: string | null }
+): Promise<SafeUserDTO> {
+
+
     // 1. Regarder si l'utilisateur existe
-    const userExists = await this.userRepository.findById(id,companyId);
+    const userExists = await this.userRepository.findById(id);
     if (!userExists) throw new NotFoundError('User not found');
 
-    // 2. Mettre à jour les champs modifiables
+    const isAdmin = requestingUser.role === UserRole.SUPER_ADMIN || requestingUser.role === UserRole.COMPANY_ADMIN;
+    const isSelf = requestingUser.id === id;
+
+    if (!isAdmin && !isSelf) {
+      throw new AuthError('Unauthorized');
+    }
+
+    if (!isAdmin) {
+      delete dto.role;
+      delete dto.isActive;
+    }
+
     if (dto.role !== undefined) userExists.role = dto.role;
     if (dto.isActive !== undefined) userExists.isActive = dto.isActive;
 
