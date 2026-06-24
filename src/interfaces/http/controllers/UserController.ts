@@ -61,21 +61,13 @@ export class UserController {
     }
 
 
-
+    // un simple EMPLOYEE ne doit pas pouvoir changer son propre role ou isActive (s'auto-promouvoir admin !). 
+    // Il faut restreindre les champs modifiables selon le rôle de qui fait la requête.
+    // A voir plus tard
     update = async (req: Request<{ id: string }, {}, UpdateUserDTO>, res: Response, next: NextFunction) => {
         try {
-            const result = await this.updateUserUseCase.execute(
-                req.params.id,
-                req.body,
-                req.user?.companyId || undefined
-            );
-            res.status(200).json(
-                {
-                    success: true,
-                    data: result
-
-                }
-            );
+            const result = await this.updateUserUseCase.execute(req.params.id, req.body, req.user!);
+            res.status(200).json({ success: true, data: result });
         } catch (error) {
             next(error);
         }
