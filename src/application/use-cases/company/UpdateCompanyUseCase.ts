@@ -1,12 +1,26 @@
 import { Company } from '@domain/entities/Company';
 import { ICompanyRepository } from '@domain/repositories/ICompanyRepository';
+import { UserRole } from '@shared/enums';
+import { AuthError } from '@shared/errors/AuthError';
 import { NotFoundError } from '@shared/errors/NotFoundError';
 import { UpdateCompanyDTO } from '@shared/types/dto.types';
 
 export class UpdateCompanyUseCase {
   constructor(private readonly companyRepository: ICompanyRepository) {}
 
-  async execute(id: string, dto: UpdateCompanyDTO): Promise<Company> {
+  async execute(
+    id: string, 
+    dto: UpdateCompanyDTO,
+    requestingUser: { id: string; role: UserRole; companyId: string | null }
+  ): Promise<Company> {
+
+    const isSuperAdmin = requestingUser.role === UserRole.SUPER_ADMIN;
+    const isCompanyAdminOwner = requestingUser.role === UserRole.COMPANY_ADMIN && requestingUser.companyId === id;
+
+    if (!isSuperAdmin && !isCompanyAdminOwner) {
+      throw new AuthError("Access denied, only admin");
+    }
+
     // 1. Vérifier si l'email existe déjà
     const existingCompany = await this.companyRepository.findById(id);
     if (!existingCompany) {
