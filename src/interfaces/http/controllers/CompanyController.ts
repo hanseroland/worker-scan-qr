@@ -4,7 +4,6 @@ import { GetAllCompaniesUseCase } from "@application/use-cases/company/GetAllCom
 import { GetCompanyUseCase } from "@application/use-cases/company/GetCompanyUseCase";
 import { UpdateCompanyUseCase } from "@application/use-cases/company/UpdateCompanyUseCase";
 import { UploadCompanyLogoUseCase } from "@application/use-cases/company/UploadCompanyLogoUseCase";
-import { UserRole } from "@shared/enums";
 import { ValidationError } from "@shared/errors/ValidationError";
 import { CreateCompanyDTO, UpdateCompanyDTO } from "@shared/types/dto.types";
 import { NextFunction, Request, Response } from "express";
@@ -21,7 +20,7 @@ export class CompanyController {
 
     create = async (req: Request<{}, {}, CreateCompanyDTO>, res: Response, next: NextFunction) => {
         try {
-            const result = await this.createCompanyUseCase.execute(req.body);
+            const result = await this.createCompanyUseCase.execute(req.body,req.user!);
             res.status(201)
                 .json(
                     {
@@ -36,19 +35,7 @@ export class CompanyController {
     getById = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
         try {
 
-            const { id: requestedId } = req.params;
-            const user = req.user;
-
-            const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
-            const isOwner = user?.role === UserRole.COMPANY_ADMIN && user?.companyId === requestedId
-
-            if (!isSuperAdmin && !isOwner) {
-                return res.status(403).json({
-                    success: false,
-                    message: "Unauthorized access"
-                });
-            }
-            const result = await this.getCompanyUseCase.execute(req.params.id);
+            const result = await this.getCompanyUseCase.execute(req.params.id,req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -62,7 +49,7 @@ export class CompanyController {
 
     getAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const result = await this.getAllCompaniesUseCase.execute();
+            const result = await this.getAllCompaniesUseCase.execute(req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -80,18 +67,14 @@ export class CompanyController {
                 throw new ValidationError("No file uploaded");
             }
 
-            const isOwner = req.user?.role === UserRole.COMPANY_ADMIN && req.user?.companyId === req.params.id;
-             if (!isOwner) {
-                return res.status(403).json({ success: false, message: "Unauthorized access" });
-            }
-
             const companyId = req.params.id;
             const filePath = req.file.path;
 
 
             const logoUrl = await this.uploadCompanyLogoUseCase.execute(
                 companyId,
-                filePath
+                filePath,
+                req.user!
             );
             return res.status(200).json({ data: logoUrl });
         } catch (error) {
@@ -102,13 +85,8 @@ export class CompanyController {
     update = async (req: Request<{ id: string }, {}, UpdateCompanyDTO>, res: Response, next: NextFunction) => {
         try {
 
-            const isSuperAdmin = req.user?.role === UserRole.SUPER_ADMIN;
-            const isOwner = req.user?.role === UserRole.COMPANY_ADMIN && req.user?.companyId === req.params.id;
-
-            if (!isSuperAdmin && !isOwner) {
-                return res.status(403).json({ success: false, message: "Unauthorized access" });
-            }
-            const result = await this.updateCompanyUseCase.execute(req.params.id, req.body);
+            
+            const result = await this.updateCompanyUseCase.execute(req.params.id, req.body,req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -123,7 +101,7 @@ export class CompanyController {
 
     delete = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
         try {
-            await this.deleteCompanyUseCase.execute(req.params.id);
+            await this.deleteCompanyUseCase.execute(req.params.id,req.user!);
             res.status(204).send()
         } catch (error) {
             next(error)
