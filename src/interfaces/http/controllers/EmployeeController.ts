@@ -4,8 +4,6 @@ import { GetAllEmployeesUseCase } from "@application/use-cases/employee/GetAllEm
 import { GetEmployeeUseCase } from "@application/use-cases/employee/GetEmployeeUseCase";
 import { UpdateEmployeeUseCase } from "@application/use-cases/employee/UpdateEmployeeUseCase";
 import { UploadEmployeePictureUseCase } from "@application/use-cases/employee/UploadEmployeePictureUseCase";
-import { UserRole } from "@shared/enums";
-import { AuthError } from "@shared/errors/AuthError";
 import { ValidationError } from "@shared/errors/ValidationError";
 import {CreateEmployeeDTO, UpdateEmployeeDTO } from "@shared/types/dto.types";
 import { NextFunction,Request,Response} from "express";

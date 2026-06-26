@@ -3,9 +3,6 @@ import { DeleteLocationUseCase } from "@application/use-cases/location/DeleteLoc
 import { GetAllLocationsUseCase } from "@application/use-cases/location/GetAllLocationsUseCase"
 import { GetLocationUseCase } from "@application/use-cases/location/GetLocationUseCase"
 import { UpdateLocationUseCase } from "@application/use-cases/location/UpdateLocationUseCase"
-import { UserRole } from "@shared/enums"
-import { AuthError } from "@shared/errors/AuthError"
-import { ValidationError } from "@shared/errors/ValidationError"
 import { CreateLocationDTO, UpdateLocationDTO } from "@shared/types/dto.types"
 import { NextFunction, Request, Response } from "express"
 
@@ -70,8 +67,7 @@ export class LocationController {
     }
 
     update = async (req: Request<{ id: string }, {}, UpdateLocationDTO>, res: Response, next: NextFunction) => {
-        try {
-            
+        try {           
             const result = await this.updateLocationUseCase.execute(
                 req.params.id,
                 req.body,
@@ -81,7 +77,6 @@ export class LocationController {
                 {
                     success: true,
                     data: result
-
                 }
             )
         } catch (error) {
