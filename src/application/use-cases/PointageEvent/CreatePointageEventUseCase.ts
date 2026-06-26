@@ -5,23 +5,34 @@ import { CreatePointageEventDTO } from '@shared/types/dto.types';
 import { randomUUID } from 'crypto';
 import { ValidateQRCodeUseCase } from '../QRCode/ValidateQRCodeUseCase';
 import { PointageEvent } from '@domain/entities/PointageEvent';
-import { PointageType } from '@shared/enums';
+import { PointageType, UserRole } from '@shared/enums';
 import { ValidationError } from '@shared/errors/ValidationError';
+import { AuthError } from '@shared/errors/AuthError';
 
 export class CreatePointageEventUseCase {
   constructor(
     private readonly pointageEventRepository: IPointageEventRepository,
     private readonly employeeRepository: IEmployeeRepository,
     private readonly validateQRCodeUseCase: ValidateQRCodeUseCase
-  ) {}
+  ) {} 
 
-  async execute(dto: CreatePointageEventDTO): Promise<PointageEvent> {
+  async execute(
+    dto: CreatePointageEventDTO,
+    requestingUser: { id: string; role: UserRole; companyId: string | null; employeeId: string | null }
+  ): Promise<PointageEvent> {
+
+
+    if (requestingUser.role === UserRole.EMPLOYEE && requestingUser.employeeId !== dto.employeeId) {
+      throw new AuthError("You can't make event for another employee");
+    }
+
+
+
     // 1. Vérifier que l'employé existe
-    const employeeExists = await this.employeeRepository.findById(
-      dto.employeeId,
-      dto.companyId
-    );
-    if (!employeeExists) throw new NotFoundError('Employee not found');
+    const employeeExists = await this.employeeRepository.findById(dto.employeeId);
+    if (!employeeExists || employeeExists.companyId !== dto.companyId) {
+      throw new NotFoundError('Employee not found in this company');
+    }
 
     // 2. Valider le QR Code + géolocalisation via ValidateQRCodeUseCase
     await this.validateQRCodeUseCase.execute(
