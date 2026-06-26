@@ -23,23 +23,7 @@ export class EmployeeController {
     create = async (req: Request<{}, {}, CreateEmployeeDTO>, res: Response, next: NextFunction) => {
       try {
 
-        // 1. Déterminer le companyId cible
-        const companyId = req.user?.role === 'SUPER_ADMIN' 
-            ? req.body.companyId 
-            : req.user?.companyId;
-
-        // 2. Validation stricte : Si on n'a pas de companyId à ce stade, c'est une erreur
-        if (!companyId) {
-            throw new ValidationError("Company should be specify to create an employee.");
-        }
-
-        // 3. Construction du payload garanti
-        const payload: CreateEmployeeDTO = {
-            ...req.body,
-            companyId: companyId 
-        };
-
-        const result = await this.createEmployeeUseCase.execute(payload);
+        const result = await this.createEmployeeUseCase.execute(req.body,req.user!);
         res.status(201)
             .json(
                 { 
@@ -51,23 +35,16 @@ export class EmployeeController {
     }
    }
 
-   getById = async (req: Request<{employeeId: string}>, res: Response, next: NextFunction) => {
+   getById = async (req: Request<{id: string}>, res: Response, next: NextFunction) => {
     try {
 
-        // 1. Sécurité multi-tenant 
-        const companyId = req.user?.companyId;
+        // 1. Paramètre route
+        const id = req.params.id;
 
-        if (!companyId) {
-            return next(new AuthError("Unauthorized"));
-        }
+        // 2. Use case
+        const result = await this.getEmployeeUseCase.execute(id,req.user!);
 
-        // 2. Paramètre route
-        const employeeId = req.params.employeeId;
-
-        // 3. Use case
-        const result = await this.getEmployeeUseCase.execute(employeeId,companyId);
-
-        // 4. Reponse
+        // 3. Reponse
         res.status(200).json(
             {
                 success:true,
@@ -81,21 +58,8 @@ export class EmployeeController {
 
   getAll = async (req: Request<{companyId:string}>, res: Response, next: NextFunction) => {
         try {
-        
-          const { companyId: requestedId } = req.params;
-                const user = req.user;
-            
-                const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
-                const isOwner = user?.companyId === requestedId;
-            
-                if (!isSuperAdmin && !isOwner) {
-                    return res.status(403).json({
-                            success: false,
-                            message: "Unauthorized access"
-                         });
-            }
-          const companyId = req.params.companyId
-          const result = await this.getAllEmployeeUseCase.execute(companyId);
+          const companyId = req.query.companyId || req.user?.companyId || undefined;
+          const result = await this.getAllEmployeeUseCase.execute(companyId as string,req.user!);
           res.status(200).json(
             {
                 success:true,
@@ -107,31 +71,20 @@ export class EmployeeController {
         }
   }
 
-   uploadPicture = async (req: Request<{employeeId:string}, {}, {}>, res: Response, next: NextFunction) => {
+   uploadPicture = async (req: Request<{id:string}, {}, {}>, res: Response, next: NextFunction) => {
     try {
-        const companyId = req.user?.companyId;
-        const isAdmin = req.user?.role === UserRole.SUPER_ADMIN || req.user?.role === UserRole.COMPANY_ADMIN;
-        const isSelf = req.user?.employeeId === req.params.employeeId;
-
-        if (!isAdmin && !isSelf) {
-            return res.status(403).json({ success: false, message: "Unauthorized access" });
-        }
-
-        if (!companyId) {
-            return next(new AuthError("Unauthorized"));
-        }
 
         if (!req.file) {
             throw new ValidationError("No file uploaded");
         }
 
-        const employeeId = req.params.employeeId;
+        const id = req.params.id;
         const filePath = req.file.path;
 
         const logoUrl = await this.uploadEmployeePictureUseCase.execute(
-            employeeId,
-            companyId,
-            filePath
+            id,
+            filePath,
+            req.user!
         );
         return res.status(200).json({ data: logoUrl });
     } catch (error) {
@@ -139,20 +92,20 @@ export class EmployeeController {
     }
 }
 
-  update = async (req: Request<{employeeId:string}, {}, UpdateEmployeeDTO>, res: Response, next: NextFunction)=>{
+  update = async (req: Request<{id:string}, {}, UpdateEmployeeDTO>, res: Response, next: NextFunction)=>{
     try {
-        const companyId = req.user?.companyId;
+        /*const companyId = req.user?.companyId;
 
         if (!companyId) {
                 return next(new AuthError("Unauthorized"));
-        }
+        }*/
         
-        const employeeId = req.params.employeeId;
+        const id = req.params.id;
 
         const result = await this.updateEmployeeUseCase.execute(
-            employeeId,
-            companyId,
-            req.body
+            id,
+            req.body,
+            req.user!
         );
          res.status(200).json(
             {
@@ -166,16 +119,11 @@ export class EmployeeController {
     }
   }
 
-  delete = async (req: Request<{employeeId:string}>, res: Response, next: NextFunction) => {
+  delete = async (req: Request<{id:string}>, res: Response, next: NextFunction) => {
     try {
-        const companyId = req.user?.companyId;
-
-        if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-        }
         
-        const employeeId = req.params.employeeId;
-        await this.desactivateEmployeeUseCase.execute(employeeId,companyId);
+        const id = req.params.id;
+        await this.desactivateEmployeeUseCase.execute(id,req.user!);
          res.status(204).send()
     } catch (error) {
         next(error)
