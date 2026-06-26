@@ -8,14 +8,15 @@ import { upload } from "@interfaces/middlewares/upload.middleware";
 export const employeeRoutes = (employeeController:EmployeeController,jwtService: IJwtTokenService) =>{
     const router = Router();
 
-    router.post('/',authMiddleware(jwtService),requireRole(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN), employeeController.create )
-    router.post('/:employeeId/picture',authMiddleware(jwtService),upload.single('picture'),employeeController.uploadPicture)
-    router.get('/',authMiddleware(jwtService), requireRole(UserRole.COMPANY_ADMIN), employeeController.getAll )
-    router.get('/:id',authMiddleware(jwtService), employeeController.getById );
-    router.put('/:id',authMiddleware(jwtService),requireRole(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN), employeeController.update );
-     router.delete('/:id',authMiddleware(jwtService),requireRole(UserRole.COMPANY_ADMIN), employeeController.delete )
+    // Protection globale
+    router.use(authMiddleware(jwtService));
 
-
+    router.post('/',requireRole(UserRole.COMPANY_ADMIN), employeeController.create )
+    router.get('/', requireRole(UserRole.COMPANY_ADMIN), employeeController.getAll )
+    router.get('/:id', employeeController.getById );
+    router.put('/:id', employeeController.update );
+    router.post('/:id/picture',upload.single('picture'),employeeController.uploadPicture)
+    router.delete('/:id',requireRole(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN), employeeController.delete )
 
     return router
 }
