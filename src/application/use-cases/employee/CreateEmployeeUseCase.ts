@@ -2,6 +2,8 @@ import { Employee } from '@domain/entities/Employee';
 import { ICompanyRepository } from '@domain/repositories/ICompanyRepository';
 import { IEmployeeRepository } from '@domain/repositories/IEmployeeRepository';
 import { IEmailService } from '@domain/services/IEmailService';
+import { UserRole } from '@shared/enums';
+import { AuthError } from '@shared/errors/AuthError';
 import { NotFoundError } from '@shared/errors/NotFoundError';
 import { ValidationError } from '@shared/errors/ValidationError';
 import { CreateEmployeeDTO } from '@shared/types/dto.types';
@@ -14,7 +16,19 @@ export class CreateEmployeeUseCase {
     private readonly emailService : IEmailService
   ) {}
 
-  async execute(dto: CreateEmployeeDTO): Promise<void> {
+  async execute(
+    dto: CreateEmployeeDTO,
+    requestingUser: { id: string; role: UserRole; companyId: string | null }
+  ): Promise<void> {
+
+
+    const isCompanyAdmin = requestingUser.role === UserRole.COMPANY_ADMIN;
+
+    //Règle Matrice : Un CompanyAdmin ne peut créer un employé QUE dans sa propre boîte
+    if (isCompanyAdmin && requestingUser.companyId !== dto.companyId) {
+      throw new AuthError("You can only create employee for your company");
+    }
+
     // 1. Vérifier que la Company existe
     const companyExists = await this.companyRepository.findById(dto.companyId);
     if (!companyExists) {
