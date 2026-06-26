@@ -14,7 +14,7 @@ export class EmployeeInvitationController {
 
     create = async (req: Request<{}, {}, CreateEmployeeInvitationDTO>, res: Response, next: NextFunction) => {
         try {
-            await this.createInvitationUseCase.execute(req.body);
+            await this.createInvitationUseCase.execute(req.body,req.user!);
             res.status(201).json({ success: true, message: 'Invitation sent successfully' })
 
         } catch (error) {
