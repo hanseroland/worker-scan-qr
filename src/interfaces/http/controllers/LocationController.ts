@@ -24,14 +24,7 @@ export class LocationController {
 
     create = async (req: Request<{}, {}, CreateLocationDTO>, res: Response, next: NextFunction) => {
         try {
-            const companyId = req.user?.companyId;
-            const isCompanyAdmin = req.user?.role === UserRole.COMPANY_ADMIN;
-
-            if(!companyId && !isCompanyAdmin){
-                return next(new AuthError("Unauthorized"));
-            }
-
-            const result = await this.createLocationUseCase.execute(req.body);
+            const result = await this.createLocationUseCase.execute(req.body,req.user!);
             res.status(201).json({
                 success: true,
                 message: 'Location create successfully',
@@ -42,16 +35,10 @@ export class LocationController {
         }
     }
 
-    getById = async (req: Request<{ locationId: string }, {}, {}>, res: Response, next: NextFunction) => {
+    getById = async (req: Request<{ id: string }, {}, {}>, res: Response, next: NextFunction) => {
         try {
-            const { locationId } = req.params;
-            const companyId = req.user?.companyId;
-
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
-
-            const result = await this.getLocationUseCase.execute(locationId, companyId);
+            const id  = req.params.id;
+            const result = await this.getLocationUseCase.execute(id, req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -67,20 +54,9 @@ export class LocationController {
     getAll = async (req: Request<{}, {}, {}>, res: Response, next: NextFunction) => {
         try {
 
-            const user = req.user;
+            const companyId = req.query.companyId || req.user?.companyId || undefined;
 
-            const isSuperAdmin = user?.role === UserRole.SUPER_ADMIN;
-
-            // CompanyAdmin => toujours sa propre company
-            // SuperAdmin => peut consulter une company précise via query param
-            const companyId = isSuperAdmin
-                ? req.query.companyId as string
-                : user?.companyId;
-
-            if (!companyId) {
-                return next(new ValidationError("companyId is required"));
-            }
-            const result = await this.getAllLocationsUseCase.execute(companyId);
+            const result = await this.getAllLocationsUseCase.execute(companyId as string, req.user!);
             res.status(200).json(
                 {
                     success: true,
@@ -93,20 +69,13 @@ export class LocationController {
         }
     }
 
-    update = async (req: Request<{ locationId: string }, {}, UpdateLocationDTO>, res: Response, next: NextFunction) => {
+    update = async (req: Request<{ id: string }, {}, UpdateLocationDTO>, res: Response, next: NextFunction) => {
         try {
-            const companyId = req.user?.companyId;
-
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
-
-            const locationId = req.params.locationId;
-
+            
             const result = await this.updateLocationUseCase.execute(
-                locationId,
-                companyId,
-                req.body
+                req.params.id,
+                req.body,
+                req.user!
             );
             res.status(200).json(
                 {
@@ -120,16 +89,10 @@ export class LocationController {
         }
     }
 
-    delete = async (req: Request<{ locationId: string }, {}, {}>, res: Response, next: NextFunction) => {
+    delete = async (req: Request<{ id: string }, {}, {}>, res: Response, next: NextFunction) => {
         try {
-            const companyId = req.user?.companyId;
-
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
-
-            const locationId = req.params.locationId;
-            await this.deleteLocationUseCase.execute(locationId, companyId);
+            const locationId = req.params.id;
+            await this.deleteLocationUseCase.execute(locationId, req.user!);
             res.status(204).send({success:true})
         } catch (error) {
             next(error)
