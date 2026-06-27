@@ -10,9 +10,9 @@ export const pointageEventRoutes = (pointageEventController: PointageEventContro
     router.use(authMiddleware(jwtService));
 
     // 1. Un employé scanne son QR Code de présence -> Employé uniquement
-    router.post('/scan', requireRole(UserRole.EMPLOYEE), pointageEventController.scan);
+    router.post('/scan', requireRole(UserRole.COMPANY_ADMIN,UserRole.EMPLOYEE), pointageEventController.scan);
     
-    // 2. Récupérer l'historique de pointage d'un employé précis -> Tout le monde (avec filtres dans le Use Case)
+    // 2. Récupérer l'historique de pointage d'un employé précis. Tout le monde (avec filtres dans le Use Case)
     router.get('/employee/:employeeId', pointageEventController.getByEmployee);
 
     return router;

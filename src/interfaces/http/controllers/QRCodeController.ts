@@ -4,6 +4,10 @@ import { ValidateQRCodeUseCase } from "@application/use-cases/QRCode/ValidateQRC
 import { AuthError } from "@shared/errors/AuthError"
 import { NextFunction, Request, Response } from "express"
 
+interface GenerateQRCodeBody {
+    locationId: string;
+    companyId?: string; // Optionnel pour le SuperAdmin
+}
 
 interface ValidateQRCodeBody {
     code: string;
@@ -20,16 +24,11 @@ export class QRCodeController {
     ) { }
 
 
-    generate = async (req: Request<{}, {}, { locationId: string }>, res: Response, next: NextFunction) => {
+    generate = async (req: Request<{}, {}, GenerateQRCodeBody>, res: Response, next: NextFunction) => {
         try {
-            const companyId = req.user?.companyId
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
 
-            const { locationId } = req.body
-
-            const result = await this.generateQRCodeUseCase.execute(locationId, companyId);
+            const companyId = req.body.companyId || req.user!.companyId!;
+            const result = await this.generateQRCodeUseCase.execute(req.body.locationId, companyId, req.user!);
 
             return res.status(201).json({
                 sucess:true,
@@ -42,16 +41,11 @@ export class QRCodeController {
         }
     }
 
-    rotate = async (req: Request<{}, {}, { locationId: string }>, res: Response, next: NextFunction) => {
+    rotate = async (req: Request<{}, {}, GenerateQRCodeBody>, res: Response, next: NextFunction) => {
         try {
-            const companyId = req.user?.companyId
-            if (!companyId) {
-                return next(new AuthError("Unauthorized"));
-            }
+            const companyId = req.body.companyId || req.user!.companyId!;
 
-            const { locationId } = req.body
-
-            const result = await this.rotateQRCodeUseCase.execute(locationId, companyId);
+            const result = await this.rotateQRCodeUseCase.execute(req.body.locationId, companyId,req.user!);
 
             return res.status(200).json({
                 success:true,
@@ -67,11 +61,6 @@ export class QRCodeController {
     validate = async (req: Request<{}, {}, ValidateQRCodeBody>, res: Response, next: NextFunction) => {
         try {
 
-            const companyId = req.user?.companyId;
-            if (!companyId) {
-                return next(new AuthError("Unauthorized: Missing company context"));
-            }
-
             const { code, latitude, longitude } = req.body;
 
             // Exécution de la validation (renvoie un booléen ou lève une ValidationError/NotFoundError)
@@ -79,7 +68,7 @@ export class QRCodeController {
                 code,
                 latitude,
                 longitude,
-                companyId
+                req.user!
             );
 
             return res.status(200).json({success:true, valid: isValid });
