@@ -3,5 +3,5 @@
         "./src"
     ],
     "ext": "ts",
-    "exec": "ts-node -r tsconfig-paths/register server.ts"
+    "exec": "ts-node --files -r tsconfig-paths/register server.ts"
 }

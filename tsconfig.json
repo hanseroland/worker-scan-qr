@@ -32,7 +32,11 @@
             ]
         },
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./src/shared/types"
+        ]
     },
     "include": [
         "src/**/*"
