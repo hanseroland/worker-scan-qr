@@ -4,3 +4,5 @@ export {
   InvitationType,
   InvitationStatus,
 } from '@shared/enums';
+
+export * from './dto.types';
