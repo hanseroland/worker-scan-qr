@@ -39,7 +39,7 @@ export class CreatePointageEventUseCase {
       dto.qrCode,
       dto.latitude,
       dto.longitude,
-      dto.companyId
+      requestingUser
     );
 
     // 3. Vérifier l'ordre des événements (CHECK_IN avant CHECK_OUT etc.)
